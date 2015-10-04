@@ -105,7 +105,11 @@ var_dump($point_geocentric->asArray());
 //}
 
 // We can covert it back again.
-$point_geodetic = $point_geocentric->toGeodetic();
+$point_geodetic = Geodetic::fromGeocentric($point_geocentric);
+
+// Every point type will have a `toGeocentric()` method and a static `fromGeocentric()`
+// method. A Geocentric point is the go-between common point type that conversions will
+// jump via.
 ~~~
 
 These conversions are important, because many conversion operations can only be done on

@@ -9,7 +9,7 @@
  */
 
 use Exception;
-use Proj4\Points\Geocentric;
+use Proj4\Point\Geocentric;
 
 class Datum
 {
