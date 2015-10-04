@@ -102,7 +102,16 @@ var_dump($point_geocentric->asArray());
 //  float(4798081.9953674)
 //  [2]=>
 //  float(261190.02573393)
-//}
+//  ["ellps"]=>
+//    array(3) {
+//      ["a"]=>
+//      float(6376523)
+//      ["rf"]=>
+//      float(6355863)
+//      ["name"]=>
+//      string(21) "Plessis 1817 (France)"
+//    }
+// }
 
 // We can covert it back again.
 $point_geodetic = Geodetic::fromGeocentric($point_geocentric);

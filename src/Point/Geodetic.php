@@ -90,7 +90,7 @@ class Geodetic extends AbstractPoint
             'lat' => $this->lat,
             'lon' => $this->lon,
             'height' => $this->height,
-            static::ELLIPSOID_PARAM_NAME => $this->ellipsoid,
+            static::ELLIPSOID_PARAM_NAME => $this->ellipsoid->asArray(),
         ];
     }
 
