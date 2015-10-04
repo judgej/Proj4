@@ -10,7 +10,7 @@
 
 use Exception;
 
-use Proj4\Ellipsoid;
+use Proj4\Datum;
 use Proj4\AbstractPoint;
 
 class Geodetic extends AbstractPoint
@@ -26,29 +26,29 @@ class Geodetic extends AbstractPoint
     /**
      * Initialise with (lat, long, height) parameters or [lat, long, height] array.
      */
-    public function __construct($lat, $lon = null, $height = null, Ellipsoid $ellipsoid = null)
+    public function __construct($lat, $lon = null, $height = null, Datum $datum = null)
     {
         $this->setOrdinates($lat, $lon, $height);
 
-        // Was an ellipsoid passed in as an array element?
-        if (is_array($lat) && isset($lat[static::ELLIPSOID_PARAM_NAME])) {
-            $ellsp = $lat[static::ELLIPSOID_PARAM_NAME];
+        // Was an datum passed in as an array element?
+        if (is_array($lat) && isset($lat[static::DATUM_PARAM_NAME])) {
+            $datum_data = $lat[static::DATUM_PARAM_NAME];
 
-            if ($ellsp instanceof Ellipsoid) {
+            if ($datum_data instanceof Datum) {
                 // Ellipoid object supplied.
-                $ellipsoid = $lat[static::ELLIPSOID_PARAM_NAME];
+                $datum = datum_data;
             } elseif (is_array($ellsp)) {
-                // Array provided, so turn this into an Ellipsoid.
-                $ellipsoid = new Ellipsoid($ellsp);
+                // Array provided, so turn this into an Datum.
+                $datum = new Datum(datum_data);
             }
         }
 
-        // If no ellipsoid supplied, then create a default (will be WGS84).
-        if ( ! isset($ellipsoid)) {
-            $ellipsoid = new Ellipsoid;
+        // If no datum supplied, then create a default (will be WGS84).
+        if ( ! isset($datum)) {
+            $datum = new Datum;
         }
 
-        $this->ellipsoid = $ellipsoid;
+        $this->datum = $datum;
     }
 
     /**
@@ -98,7 +98,7 @@ class Geodetic extends AbstractPoint
             'lat' => $this->lat,
             'lon' => $this->lon,
             'height' => $this->height,
-            static::ELLIPSOID_PARAM_NAME => $this->ellipsoid->asArray(),
+            static::DATUM_PARAM_NAME => $this->datum->asArray(),
         ];
     }
 
@@ -153,8 +153,8 @@ class Geodetic extends AbstractPoint
         // Square of sin(lat)
         $Sin2_Lat = $sin_lat * $sin_lat;
 
-        $a = $this->ellipsoid->a;
-        $es = $this->ellipsoid->es;
+        $a = $this->datum->getEllipsoid()->a;
+        $es = $this->datum->getEllipsoid()->es;
 
         // Earth radius at location
         $Rn = $a / (sqrt(1.0e0 - $es * $Sin2_Lat));
@@ -163,7 +163,7 @@ class Geodetic extends AbstractPoint
         $y = ($Rn + $height) * $cos_lat * sin($lon);
         $z = (($Rn * (1 - $es)) + $height) * $sin_lat;
 
-        return new Geocentric($x, $y, $z, $this->ellipsoid);
+        return new Geocentric($x, $y, $z, $this->datum);
     }
 
     /**
@@ -282,7 +282,7 @@ class Geodetic extends AbstractPoint
             $lat * static::R2D,
             $lon * static::R2D,
             $height,
-            $point->getEllipsoid()
+            $point->getDatum()
         );
 
         return $geodetic_point;

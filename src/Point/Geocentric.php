@@ -18,7 +18,7 @@
 
 use Exception;
 
-use Proj4\Ellipsoid;
+use Proj4\Datum;
 use Proj4\AbstractPoint;
 
 class Geocentric extends AbstractPoint
@@ -34,30 +34,30 @@ class Geocentric extends AbstractPoint
     /**
      * Initialise with (x, y, z) parameters or [x, y, z] array.
      */
-    public function __construct($x, $y = null, $z = null, Ellipsoid $ellipsoid = null)
+    public function __construct($x, $y = null, $z = null, Datum $datum = null)
     {
         $this->setOrdinates($x, $y, $z);
 
-        // Was an ellipsoid passed in as an array element?
-        if (is_array($x) && isset($x[static::ELLIPSOID_PARAM_NAME])) {
-            $ellps = $x[static::ELLIPSOID_PARAM_NAME];
+        // Was a datum passed in as an array element?
+        if (is_array($x) && isset($x[static::DATUM_PARAM_NAME])) {
+            $datum_param = $x[static::DATUM_PARAM_NAME];
 
-            if ($ellps instanceof Ellipsoid) {
-                // An Ellipsoid object was supplied.
-                $ellipsoid = $ellps;
-            } elseif (is_array($ellps)) {
-                // If the ellipse is an array of values, then use the array
-                // to create a new Ellipsoid object.
-                $ellipsoid = new Ellipsoid($ellps);
+            if ($datum_param instanceof Datum) {
+                // An Datum object was supplied.
+                $datum = $datum_param;
+            } elseif (is_array($datum_param)) {
+                // If the datum is an array of values, then use the array
+                // to create a new Datum object.
+                $datum = new Datum($datum);
             }
         }
 
-        // If no ellipsoid supplied, then create a default (will be WGS84).
-        if ( ! isset($ellipsoid)) {
-            $ellipsoid = new Ellipsoid;
+        // If no datum supplied, then create a default (will be WGS84).
+        if ( ! isset($datum)) {
+            $datum = new Datum;
         }
 
-        $this->ellipsoid = $ellipsoid;
+        $this->datum = $datum;
     }
 
     /**
@@ -120,7 +120,7 @@ class Geocentric extends AbstractPoint
             'x' => $this->x,
             'y' => $this->y,
             'z' => $this->z,
-            static::ELLIPSOID_PARAM_NAME => $this->ellipsoid->asArray(),
+            static::DATUM_PARAM_NAME => $this->datum->asArray(),
         ];
     }
 
@@ -138,5 +138,14 @@ class Geocentric extends AbstractPoint
     public static function fromGeocentric(Geocentric $point)
     {
         return clone $point;
+    }
+
+    /**
+     * Translate to the default WGS84 datum.
+     * Returns: a clone of the point, shifted to the WGS84 datum.
+     */
+    public function toWgs84Datum()
+    {
+        return $this->datum->toWgs84($this);
     }
 }

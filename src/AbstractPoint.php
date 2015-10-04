@@ -20,14 +20,22 @@ abstract class AbstractPoint implements PointInterface
      */
 
     const ELLIPSOID_PARAM_NAME = 'ellps';
+    const DATUM_PARAM_NAME = 'datum';
 
     /**
      * The ellipsoid for this point.
+     * TODO: REMOVE
      */
      protected $ellipsoid;
 
     /**
+     * The datum for this point.
+     */
+     protected $datum;
+
+    /**
      * Set a new elllipsoid without doing any conversion.
+     * FIXME: we are setting this in the Datum now. Do we need it here at all?
      */
     public function withEllipsoid(Ellipsoid $ellipsoid)
     {
@@ -37,10 +45,28 @@ abstract class AbstractPoint implements PointInterface
     }
 
     /**
-     * Return the ellispoid.
+     * Return the ellipsoid.
      */
     public function getEllipsoid()
     {
-        return $this->ellipsoid;
+        return $this->datum->getEllipsoid();
+    }
+
+    /**
+     * Set a new datum without doing any conversion.
+     */
+    public function withDatum(Datum $datum)
+    {
+        $clone = clone $this;
+        $clone->datum = $datum;
+        return $clone;
+    }
+
+    /**
+     * Return the datum.
+     */
+    public function getDatum()
+    {
+        return $this->datum;
     }
 }

@@ -103,6 +103,8 @@ class Datum
      * when defining a datum. WGS84 is the average approximate sea level ellipsoid which
      * is used as a reference. WGS84 ellipsoid is applied by default in Proj.4 if no
      * alternative is specified.
+     * TODO: fix this so we can pass in everything as a single array, compatible with the
+     * asArray() format.
      */
     public function __construct($params = null, Ellipsoid $ellipsoid = null)
     {
@@ -163,6 +165,14 @@ class Datum
     }
 
     /**
+     * Return the translation parameters as an array.
+     */
+    public function AsArray()
+    {
+        return $this->params + ['ellps' => $this->ellipsoid->asArray()];
+    }
+
+    /**
      * Get short name.
      */
     public function getCode()
@@ -207,13 +217,30 @@ class Datum
     }
 
     /**
+     * Set a new elllipsoid without doing any conversion.
+     */
+    public function withEllipsoid(Ellipsoid $ellipsoid)
+    {
+        $clone = clone $this;
+        $clone->ellipsoid = $ellipsoid;
+        return $clone;
+    }
+
+    /**
+     * Return the ellispoid.
+     */
+    public function getEllipsoid()
+    {
+        return $this->ellipsoid;
+    }
+
+    /**
      * Return a new geocentric point transformed to the WGS84 datum.
      * TODO: if the point already is expressed in this datum, then
      * no conversion is required.
-     * TODO: typehint so we only get a geocentric point.
      * TODO: take measurement units into account? Internally it should all be metres.
-     * TODO: return a clone of the point.
      * TODO: all same rules for fromWgs84()
+     * FIXME: the point now has a datum, so that datum must be switched when converting.
      */
     public function toWgs84(Geocentric $point)
     {
@@ -221,11 +248,7 @@ class Datum
             $x = $point->x + $this->params[0];
             $y = $point->y + $this->params[1];
             $z = $point->z + $this->params[2];
-
-            $point = $point->withOrdinates($x, $y, $z);
-        }
-
-        if ($this->type == static::TYPE_7TERM) {
+        } elseif ($this->type == static::TYPE_7TERM) {
             $Dx_BF = $this->params[0];
             $Dy_BF = $this->params[1];
             $Dz_BF = $this->params[2];
@@ -241,9 +264,13 @@ class Datum
             $x = $M_BF * ($point->x - $Rz_BF * $point->y + $Ry_BF * $point->z) + $Dx_BF;
             $y = $M_BF * ($Rz_BF * $point->x + $point->y - $Rx_BF * $point->z) + $Dy_BF;
             $z = $M_BF * (-$Ry_BF * $point->x + $Rx_BF * $point->y + $point->z) + $Dz_BF;
-
-            $point = $point->withOrdinates($x, $y, $z);
+        } else {
+            throw new Excreption('Unknown datum transformation parameter type');
         }
+
+        $point = $point
+            ->withOrdinates($x, $y, $z)
+            ->withDatum(new Datum);
 
         return $point;
     }
@@ -257,11 +284,7 @@ class Datum
             $x = $point->x - $this->params[0];
             $y = $point->y - $this->params[1];
             $z = $point->z - $this->params[2];
-
-            $point = $point->withOrdinates($x, $y, $z);
-        }
-
-        if ($this->type == static::TYPE_7TERM) {
+        } elseif ($this->type == static::TYPE_7TERM) {
             $Dx_BF = $this->params[0];
             $Dy_BF = $this->params[1];
             $Dz_BF = $this->params[2];
@@ -281,9 +304,13 @@ class Datum
             $x = $x_tmp + $Rz_BF * $y_tmp - $Ry_BF * $z_tmp;
             $y = -$Rz_BF * $x_tmp + $y_tmp + $Rx_BF * $z_tmp;
             $z = $Ry_BF * $x_tmp - $Rx_BF * $y_tmp + $z_tmp;
-
-            $point = $point->withOrdinates($x, $y, $z);
+        } else {
+            throw new Excreption('Unknown datum transformation parameter type');
         }
+
+        // Give the point the new datum.
+        $point = $point->withOrdinates($x, $y, $z)
+            ->withDatum($this);
 
         return $point;
     }
