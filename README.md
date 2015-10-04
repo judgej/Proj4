@@ -119,4 +119,10 @@ the aim of leaving you with the same type of point at the end. Or you can manual
 step. The choice will be yours, but the package will look after you with appropriate type
 hinting.
 
+## Next Steps
 
+* Introduce projections.
+* A parser for PROJ.4 parameter strings.
+* Tables of common ellipsoids, datums, geographic reference systems, with the facility to inject more.
+* Tests! I'm not good at these, so help will be appreciated.
+* Feeding ideas back into `Proj4php`.
