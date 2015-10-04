@@ -16,6 +16,12 @@ abstract class AbstractPoint
     const R2D = 57.29577951308232088;
 
     /**
+     * The Proj4 name of the ellipsoid parameter.
+     */
+
+    const ELLIPSOID_PARAM_NAME = 'ellps';
+
+    /**
      * The ellipsoid for this point.
      */
      protected $ellipsoid;

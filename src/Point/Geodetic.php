@@ -24,15 +24,15 @@ class Geodetic extends AbstractPoint
     protected $height;
 
     /**
-     * Initialise with (x, y, z) or [x, y, z].
+     * Initialise with (lat, long, height) parameters or [lat, long, height] array.
      */
     public function __construct($lat, $lon = null, $height = null, Ellipsoid $ellipsoid = null)
     {
         $this->setOrdinates($lat, $lon, $height);
 
         // Was an ellipsoid passed in as an array element?
-        if (is_array($lat) && isset($lat['ellps']) && $lat['ellps'] instanceof Ellipsoid) {
-            $ellipsoid = $lat['ellps'];
+        if (is_array($lat) && isset($lat[static::ELLIPSOID_PARAM_NAME]) && $lat[static::ELLIPSOID_PARAM_NAME] instanceof Ellipsoid) {
+            $ellipsoid = $lat[static::ELLIPSOID_PARAM_NAME];
         }
 
         // If no ellipsoid supplied, then create a default (will be WGS84).
@@ -90,7 +90,7 @@ class Geodetic extends AbstractPoint
             'lat' => $this->lat,
             'lon' => $this->lon,
             'height' => $this->height,
-            'ellps' => $this->ellipsoid,
+            static::ELLIPSOID_PARAM_NAME => $this->ellipsoid,
         ];
     }
 

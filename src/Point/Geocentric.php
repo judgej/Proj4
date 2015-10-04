@@ -32,15 +32,15 @@ class Geocentric extends AbstractPoint
     protected $z;
 
     /**
-     * Initialise with (x, y, z) or [x, y, z].
+     * Initialise with (x, y, z) parameters or [x, y, z] array.
      */
     public function __construct($x, $y = null, $z = null, Ellipsoid $ellipsoid = null)
     {
         $this->setOrdinates($x, $y, $z);
 
         // Was an ellipsoid passed in as an array element?
-        if (is_array($x) && isset($x['ellps']) && $x['ellps'] instanceof Ellipsoid) {
-            $ellipsoid = $x['ellps'];
+        if (is_array($x) && isset($x[static::ELLIPSOID_PARAM_NAME]) && $x[static::ELLIPSOID_PARAM_NAME] instanceof Ellipsoid) {
+            $ellipsoid = $x[static::ELLIPSOID_PARAM_NAME];
         }
 
         // If no ellipsoid supplied, then create a default (will be WGS84).
@@ -111,7 +111,7 @@ class Geocentric extends AbstractPoint
             'x' => $this->x,
             'y' => $this->y,
             'z' => $this->z,
-            'ellps' => $this->ellipsoid,
+            static::ELLIPSOID_PARAM_NAME => $this->ellipsoid,
         ];
     }
 
