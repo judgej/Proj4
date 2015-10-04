@@ -6,7 +6,7 @@
 
 use Exception;
 
-abstract class AbstractPoint
+abstract class AbstractPoint implements PointInterface
 {
     /**
      * Degrees to/from radians conversion.
@@ -27,7 +27,7 @@ abstract class AbstractPoint
      protected $ellipsoid;
 
     /**
-     * Set a new elllipsoide without doing any conversion.
+     * Set a new elllipsoid without doing any conversion.
      */
     public function withEllipsoid(Ellipsoid $ellipsoid)
     {
@@ -43,5 +43,4 @@ abstract class AbstractPoint
     {
         return $this->ellipsoid;
     }
-
 }
