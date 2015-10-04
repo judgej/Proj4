@@ -30,6 +30,7 @@ interface PointInterface
 
     /**
      * Create a Geodetic (lat/lon/height) point from a Geocentric point.
+     * Returns: object Geodetic
      */
     public static function fromGeocentric(Geocentric $point);
 }

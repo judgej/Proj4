@@ -39,10 +39,17 @@ class Geocentric extends AbstractPoint
         $this->setOrdinates($x, $y, $z);
 
         // Was an ellipsoid passed in as an array element?
-        // TODO: if the ellipse is an array of values, then use the array
-        // to create a new Ellipse object.
-        if (is_array($x) && isset($x[static::ELLIPSOID_PARAM_NAME]) && $x[static::ELLIPSOID_PARAM_NAME] instanceof Ellipsoid) {
-            $ellipsoid = $x[static::ELLIPSOID_PARAM_NAME];
+        if (is_array($x) && isset($x[static::ELLIPSOID_PARAM_NAME])) {
+            $ellps = $x[static::ELLIPSOID_PARAM_NAME];
+
+            if ($ellps instanceof Ellipsoid) {
+                // An Ellipsoid object was supplied.
+                $ellipsoid = $ellps;
+            } elseif (is_array($ellps)) {
+                // If the ellipse is an array of values, then use the array
+                // to create a new Ellipsoid object.
+                $ellipsoid = new Ellipsoid($ellps);
+            }
         }
 
         // If no ellipsoid supplied, then create a default (will be WGS84).

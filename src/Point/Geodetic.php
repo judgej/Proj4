@@ -31,8 +31,16 @@ class Geodetic extends AbstractPoint
         $this->setOrdinates($lat, $lon, $height);
 
         // Was an ellipsoid passed in as an array element?
-        if (is_array($lat) && isset($lat[static::ELLIPSOID_PARAM_NAME]) && $lat[static::ELLIPSOID_PARAM_NAME] instanceof Ellipsoid) {
-            $ellipsoid = $lat[static::ELLIPSOID_PARAM_NAME];
+        if (is_array($lat) && isset($lat[static::ELLIPSOID_PARAM_NAME])) {
+            $ellsp = $lat[static::ELLIPSOID_PARAM_NAME];
+
+            if ($ellsp instanceof Ellipsoid) {
+                // Ellipoid object supplied.
+                $ellipsoid = $lat[static::ELLIPSOID_PARAM_NAME];
+            } elseif (is_array($ellsp)) {
+                // Array provided, so turn this into an Ellipsoid.
+                $ellipsoid = new Ellipsoid($ellsp);
+            }
         }
 
         // If no ellipsoid supplied, then create a default (will be WGS84).
