@@ -123,6 +123,9 @@ hinting.
 
 ## Next Steps
 
+* Implement a datum shift function. For this, a point needs to identify what datum it uses at
+  any time, so we know whether a real shift is needed converting to another datum, and the
+  resulting datum will give contact to the new point (which will have different values).
 * Introduce projections.
 * A parser for PROJ.4 parameter strings.
 * Tables of common ellipsoids, datums, geographic reference systems, with the facility to inject more.
