@@ -148,4 +148,16 @@ class Geocentric extends AbstractPoint
     {
         return $this->datum->toWgs84($this);
     }
+
+    /**
+     * Shift from WGS84 to another datum.
+     * Returns: a clone of the point, shifted from the WGS84 datum.
+     */
+    public function toDatum(Datum $datum)
+    {
+        // Make sure we are WGS84 before attemping a datum shift.
+        $point = $this->toWgs84();
+
+        return $datum->fromWgs84($point);
+    }
 }

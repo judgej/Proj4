@@ -312,10 +312,10 @@ class Datum
         }
 
         // Give the point the new datum.
-        $point = $point
+        $new_point = $point
             ->withOrdinates($x, $y, $z)
             ->withDatum($this);
 
-        return $point;
+        return $new_point;
     }
 }

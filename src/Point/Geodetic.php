@@ -307,4 +307,21 @@ class Geodetic extends AbstractPoint
 
         return $point;
     }
+
+    /**
+     * Shift to another datum.
+     */
+    public function toDatum(Datum $datum)
+    {
+        // Convert to geocentric first.
+        $point = $this->toGeocentric();
+
+        // Now shift to the new datum.
+        $point = $point->toDatum($datum);
+
+        // Then back to geodetic.
+        $point = static::fromGeocentric($point);
+
+        return $point;
+    }
 }
