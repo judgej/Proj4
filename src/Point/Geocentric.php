@@ -69,16 +69,16 @@ class Geocentric extends AbstractPoint
         if (is_array($x)) {
             $values = array_values($x);
 
-            if (isset($values[2])) {
-                $z = $values[2];
+            if (isset($values[0])) {
+                $x = $values[0];
             }
 
             if (isset($values[1])) {
                 $y = $values[1];
             }
 
-            if (isset($values[0])) {
-                $x = $values[0];
+            if (isset($values[2])) {
+                $z = $values[2];
             }
         }
 
@@ -141,10 +141,10 @@ class Geocentric extends AbstractPoint
     }
 
     /**
-     * Translate to the default WGS84 datum.
+     * Shift to the default WGS84 datum.
      * Returns: a clone of the point, shifted to the WGS84 datum.
      */
-    public function toWgs84Datum()
+    public function toWgs84()
     {
         return $this->datum->toWgs84($this);
     }

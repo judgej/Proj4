@@ -28,7 +28,7 @@ class Datum
     const TYPE_NODATUM = 5;
 
     // Convert parts per million to a multiplier.
-    const PPM_TO_MULT = 1.0000001;
+    const PPM_TO_MULT = 0.0000001;
 
     // Convert seconds of arch to radians.
     // Pi/180/3600
@@ -240,7 +240,7 @@ class Datum
      * no conversion is required.
      * TODO: take measurement units into account? Internally it should all be metres.
      * TODO: all same rules for fromWgs84()
-     * FIXME: the point now has a datum, so that datum must be switched when converting.
+     * TODO: if we are already WGS84, then there are no translations necessary.
      */
     public function toWgs84(Geocentric $point)
     {
@@ -253,26 +253,29 @@ class Datum
             $Dy_BF = $this->params[1];
             $Dz_BF = $this->params[2];
 
-            // These need converting from seconds of arc to radians.
+            // The rotation parameters need converting from seconds of arc to radians.
+            // Seconds of arc is the standard format in which datum rotations are supplied.
             $Rx_BF = $this->params[3] * static::SEC_TO_RAD;
             $Ry_BF = $this->params[4] * static::SEC_TO_RAD;
             $Rz_BF = $this->params[5] * static::SEC_TO_RAD;
 
-            // Convert parts per million to a multiplier
-            $M_BF = $this->params[6] * static::PPM_TO_MULT;
+            // Convert parts-per-million scaling factor to a multiplier.
+            $M_BF = 1 + ($this->params[6] * static::PPM_TO_MULT);
 
             $x = $M_BF * ($point->x - $Rz_BF * $point->y + $Ry_BF * $point->z) + $Dx_BF;
             $y = $M_BF * ($Rz_BF * $point->x + $point->y - $Rx_BF * $point->z) + $Dy_BF;
             $z = $M_BF * (-$Ry_BF * $point->x + $Rx_BF * $point->y + $point->z) + $Dz_BF;
         } else {
-            throw new Excreption('Unknown datum transformation parameter type');
+            throw new Excreption('Unknown datum transformation parameters type');
         }
 
-        $point = $point
+        // Return a new point, with the new coordinates, and with a default WGS84 datum.
+        // Even if nothing has chanegd, we return a clone.
+        $new_point = $point
             ->withOrdinates($x, $y, $z)
             ->withDatum(new Datum);
 
-        return $point;
+        return $new_point;
     }
 
     /**
@@ -295,7 +298,7 @@ class Datum
             $Rz_BF = $this->params[5] * static::SEC_TO_RAD;
 
             // Convert parts per million to a multiplier
-            $M_BF = $this->params[6] * static::PPM_TO_MULT;
+            $M_BF = 1 + ($this->params[6] * static::PPM_TO_MULT);
 
             $x_tmp = ($point->x - $Dx_BF) / $M_BF;
             $y_tmp = ($point->y - $Dy_BF) / $M_BF;
@@ -309,7 +312,8 @@ class Datum
         }
 
         // Give the point the new datum.
-        $point = $point->withOrdinates($x, $y, $z)
+        $point = $point
+            ->withOrdinates($x, $y, $z)
             ->withDatum($this);
 
         return $point;

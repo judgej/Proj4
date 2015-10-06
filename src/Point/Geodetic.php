@@ -287,4 +287,21 @@ class Geodetic extends AbstractPoint
 
         return $geodetic_point;
     }
+
+    /**
+     * Do a datum shift to WGS84.
+     */
+    public function toWgs84()
+    {
+        // Convert to geocentric first.
+        $point = $this->toGeocentric();
+
+        // Do a datum shift.
+        $point = $point->toWgs84();
+
+        // Convert back to geodetic.
+        $point = static::fromGeocentric($point);
+
+        return $point;
+    }
 }
