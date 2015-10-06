@@ -171,7 +171,7 @@ class Geodetic extends AbstractPoint
      */
     public static function fromGeocentric(Geocentric $point)
     {
-        // local defintions and variables
+        // Local definitions and variables
         // end-criterium of loop, accuracy of sin(Latitude)
 
         $genau = 1.0E-12;
@@ -182,6 +182,8 @@ class Geodetic extends AbstractPoint
         $Y = $point->y;
 
         // Z value not always supplied
+        // CHECKME: this does not make sense. Without Z we are talking about a flat
+        // plain, and not a 3D point in space.
         $Z = ($point->z ? $point->z : 0.0);
 
         /*
@@ -208,11 +210,12 @@ class Geodetic extends AbstractPoint
         $b = $point->getEllipsoid()->b;
 
         $at_pole = false;
-        // The distance from the line joining the poles.
+
+        // The distance from the axis passing through the poles.
         $P = sqrt($X * $X + $Y * $Y);
         $RR = sqrt($X * $X + $Y * $Y + $Z * $Z);
 
-        // Special cases for latitude and lonitude
+        // Special cases for latitude and longitude.
         if ($P / $a < $genau) {
             // Special case: at the poles if P=0. (X=0, Y=0)
             $at_pole = true;
@@ -232,7 +235,7 @@ class Geodetic extends AbstractPoint
             $lon = atan2($Y, $X);
         }
 
-        // The eccentricity squared is used a lot in the calculations.
+        // The eccentricity squared.
         $es = $point->getEllipsoid()->es;
 
         /* --------------------------------------------------------------
@@ -276,7 +279,7 @@ class Geodetic extends AbstractPoint
         $lat = atan($SPHI / abs($CPHI));
 
         // Create a new Geodetic coordinate.
-        // Give it same datum and ellipsoid as the current point.
+        // Keep the same datum as the current point.
 
         $geodetic_point = new static(
             $lat * static::R2D,
