@@ -121,6 +121,104 @@ $point_geodetic = Geodetic::fromGeocentric($point_geocentric);
 // jump via.
 ~~~
 
+Here is another example, datum-shifting a geodetic coordinate from OSGB36 to WGS84 and
+back again:
+
+~~~php
+// We are pointing at Edinburgh castle:
+// OSGB36 (55°56′55.15″N, 003°11′54.57″W) == WGS84 (55°56′54.94″N, 003°11′59.69″W)
+
+// Set up the datum
+$ellipsoid_airy = new Ellipsoid(['a' => 6377563.396, 'b' => 6356256.910, 'code' => 'airy', 'name' => 'Airy 1830']);
+$datum_osgb36 = new Datum([446.448, -125.157, 542.060, 0.1502, 0.2470, 0.8421, -20.4894], $ellipsoid_airy);
+
+// Create the point.
+$point_castle = new Geodetic(55+(56/60)+(55.15/3600), -(3+(11/60)+(54.57/3600)), 0, $datum_osgb36);
+
+// Original OSGB36 point.
+echo "point_castle = " . print_r($point_castle->asArray(), true) . "\n";
+
+// Shift to WGS84.
+$point_castle_wgs84 = $point_castle->toWgs84();
+echo "point_castle_wgs84 = " . print_r($point_castle_wgs84->asArray(), true) . "\n";
+
+// Back to OSGB36
+$point_castle_osgb36 = $point_castle_wgs84->toDatum($datum_osgb36);
+echo "point_castle_osgb36 = " . print_r($point_castle_osgb36->asArray(), true) . "\n";
+~~~
+
+This is the result:
+
+~~~php
+point_castle = Array
+(
+    [lat] => 55.948652777778
+    [lon] => -3.1984916666667
+    [height] => 0
+    [datum] => Array
+        (
+            [0] => 446.448
+            [1] => -125.157
+            [2] => 542.06
+            [3] => 0.1502
+            [4] => 0.247
+            [5] => 0.8421
+            [6] => -20.4894
+            [ellps] => Array
+                (
+                    [a] => 6377563.396
+                    [b] => 6356256.91
+                    [code] => airy
+                    [name] => Airy 1830
+                )
+        )
+}
+
+point_castle_wgs84 = Array
+(
+    [lat] => 55.769831996508
+    [lon] => -3.1999147965915
+    [height] => -14471.682546767
+    [datum] => Array
+        (
+            [0] => 0
+            [1] => 0
+            [2] => 0
+            [ellps] => Array
+                (
+                    [a] => 6378137
+                    [rf] => 298.257223563
+                    [code] => WGS84
+                    [name] => WGS 84
+                )
+        )
+)
+
+point_castle_osgb36 = Array
+(
+    [lat] => 55.948652777402
+    [lon] => -3.1984916671385
+    [height] => 2.9096379876137E-5
+    [datum] => Array
+        (
+            [0] => 446.448
+            [1] => -125.157
+            [2] => 542.06
+            [3] => 0.1502
+            [4] => 0.247
+            [5] => 0.8421
+            [6] => -20.4894
+            [ellps] => Array
+                (
+                    [a] => 6377563.396
+                    [b] => 6356256.91
+                    [code] => airy
+                    [name] => Airy 1830
+                )
+        )
+)
+~~~
+
 These conversions are important, because many conversion operations can only be done on
 certain coordinate types, or using certain datums. All the more complex conersions will be
 built upon translating all these points to standard forms that can then be operated on.
