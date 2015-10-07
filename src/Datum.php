@@ -1,11 +1,12 @@
 <?php namespace Proj4;
 
 /**
- * Defines a datum.
- * TODO: a "from name" static method to return a datum by name, e.g. NAD83.
- * These would include an ellipsoid by name. Or maybe not - perhaps that is
- * the job of a Proj4 (or other syntax) parameter parser service. Let's just
- * stick to what the data is in these objects, and not where it comes from.
+ * Defines a geodetic ellipsoidal datum.
+ * This is an ellipsoid-based datum (there are other types).
+ * The parameters are: the 3D cartesian location of the origin, the
+ * orientation of the axes, and the ellipsoid.
+ * A datum is defined by how it relates to the WGS84 datum - the worldwide
+ * standard.
  */
 
 use Exception;
@@ -20,12 +21,12 @@ class Datum
     const TYPE_7TERM = 2;
 
     // Not used (yet).
-    const TYPE_UNKNOWN = 0;
-    const TYPE_GRIDSHIFT = 3;
+    //const TYPE_UNKNOWN = 0;
+    //const TYPE_GRIDSHIFT = 3;
     // WGS84 or equivalent
-    const TYPE_WGS84 = 4;
+    //const TYPE_WGS84 = 4;
     // WGS84 or equivalent
-    const TYPE_NODATUM = 5;
+    //const TYPE_NODATUM = 5;
 
     // Convert parts per million to a multiplier.
     const PPM_TO_MULT = 0.0000001;

@@ -16,7 +16,8 @@ use Proj4\AbstractPoint;
 class Geodetic extends AbstractPoint
 {
     /**
-     * The coordinates.
+     * The coordinates: latitude, longitude and ellipsoid height (not geoid height).
+     * Units are degrees (-180 to +180), degrees and metres.
      */
 
     protected $lat;

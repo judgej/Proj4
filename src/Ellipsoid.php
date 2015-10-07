@@ -282,46 +282,23 @@ class Ellipsoid
     }
 
     /**
-     * Return as an array.
-     * TODO: return somethign sensible for key 'ellps'.
-     */
-    public function asArray()
-    {
-        $result = [];
-
-        if (isset($this->a)) {
-            $result['a'] = $this->a;
-        }
-
-        if (isset($this->b)) {
-            $result['b'] = $this->b;
-        } elseif (isset($this->f)) {
-            $result['f'] = $this->f;
-        } elseif (isset($this->rf)) {
-            $result['rf'] = $this->rf;
-        }
-
-        if (isset($this->code)) {
-            $result['code'] = $this->code;
-        }
-
-        if (isset($this->name)) {
-            $result['name'] = $this->name;
-        }
-
-        return $result;
-    }
-
-    /**
      * Return the first eccentricity squared.
      */
     public function getES()
     {
-        $a2 = $this->a * $this->a;
-        $b = $this->getB();
-        $b2 =  $b * $b;
+        // Calculate from a and b, if b has been supplied.
+        if (isset($this->b)) {
+            $a2 = $this->a * $this->a;
+            $b = $this->b;
+            $b2 =  $this->b * $this->b;
 
-        return ($a2 - $b2) / $a2;
+            return ($a2 - $b2) / $a2;
+        } else {
+            // Otherwise use f.
+            $f = $this->getF();
+
+            return (2 * $f) - ($f * $f);
+        }
     }
 
     /**
@@ -329,11 +306,9 @@ class Ellipsoid
      */
     public function getE()
     {
-        $a2 = $this->a * $this->a;
-        $b = $this->getB();
-        $b2 =  $b * $b;
+        $es = $this->getES();
 
-        return sqrt(1 - ($b2 / $a2));
+        return sqrt($es);
     }
 
     /**
@@ -366,6 +341,37 @@ class Ellipsoid
         }
 
         // TODO: exception - unknown property.
+    }
+
+    /**
+     * Return as an array.
+     * TODO: return somethign sensible for key 'ellps'.
+     */
+    public function asArray()
+    {
+        $result = [];
+
+        if (isset($this->a)) {
+            $result['a'] = $this->a;
+        }
+
+        if (isset($this->b)) {
+            $result['b'] = $this->b;
+        } elseif (isset($this->f)) {
+            $result['f'] = $this->f;
+        } elseif (isset($this->rf)) {
+            $result['rf'] = $this->rf;
+        }
+
+        if (isset($this->code)) {
+            $result['code'] = $this->code;
+        }
+
+        if (isset($this->name)) {
+            $result['name'] = $this->name;
+        }
+
+        return $result;
     }
 
     /**

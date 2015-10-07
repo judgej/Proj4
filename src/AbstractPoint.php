@@ -23,12 +23,6 @@ abstract class AbstractPoint implements PointInterface
     const DATUM_PARAM_NAME = 'datum';
 
     /**
-     * The ellipsoid for this point.
-     * TODO: REMOVE
-     */
-     protected $ellipsoid;
-
-    /**
      * The datum for this point.
      */
      protected $datum;

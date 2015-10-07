@@ -83,6 +83,7 @@ $ellipsoid_plessis = new Ellipsoid(['a' => 6376523.0, 'rf' => 6355863.0, 'name' 
 
 // We create a geodetic (lat/long) point.
 // It gets a WGS84 ellipsoid by default.
+// The geodetic height defaults to zero, so this point is rigth on the ellipsoid.
 $point = new Geodetic(54.807601889865, -1.5888977);
 
 // A point in France, using a the "Plessis 1817" ellipsoid.
@@ -176,9 +177,9 @@ point_castle = Array
 
 point_castle_wgs84 = Array
 (
-    [lat] => 55.769831996508
+    [lat] => 55.94859199041
     [lon] => -3.1999147965915
-    [height] => -14471.682546767
+    [height] => 169.58012914099
     [datum] => Array
         (
             [0] => 0
@@ -198,7 +199,7 @@ point_castle_osgb36 = Array
 (
     [lat] => 55.948652777402
     [lon] => -3.1984916671385
-    [height] => 2.9096379876137E-5
+    [height] => 2.9094517230988E-5
     [datum] => Array
         (
             [0] => 446.448
@@ -234,11 +235,8 @@ hinting.
 
 ## Next Steps
 
-* Implement a datum shift function. For this, a point needs to identify what datum it uses at
-  any time, so we know whether a real shift is needed converting to another datum, and the
-  resulting datum will give contact to the new point (which will have different values).
 * Introduce projections.
 * A parser for PROJ.4 parameter strings.
-* Tables of common ellipsoids, datums, geographic reference systems, with the facility to inject more.
+* Tables of common ellipsoids, datums, geographic reference systems, with the facility to inject more.  See Issue #2
 * Tests! I'm not good at these, so help will be appreciated.
 * Feeding ideas back into `Proj4php`.
