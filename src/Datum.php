@@ -107,8 +107,27 @@ class Datum
      * TODO: fix this so we can pass in everything as a single array, compatible with the
      * asArray() format.
      */
-    public function __construct($params = null, Ellipsoid $ellipsoid = null)
+    public function __construct(array $params = null, Ellipsoid $ellipsoid = null)
     {
+        // If an "ellps" element has been included, then make that the ellipse.
+        if (isset($params) && isset($params['ellps'])) {
+            $ellps = $params[AbstractPoint::ELLIPSOID_PARAM_NAME];
+
+            // Remove it from the array.
+            unset($params[AbstractPoint::ELLIPSOID_PARAM_NAME]);
+
+            if ($ellps instanceof Ellipsoid) {
+                $ellipsoid = $ellps;
+            } elseif (is_array($ellps)) {
+                $ellipsoid = new Ellipsoid($ellps);
+            } else {
+                throw new Exception(sprintf(
+                    '"%s" element passed to Datum with unexpected data type',
+                    AbstractPoint::ELLIPSOID_PARAM_NAME
+                ));
+            }
+        }
+
         // An unspecified ellipsoid will default to WGS84.
         if (empty($ellipsoid)) {
             // The default ellipsoid is a WGS84.
@@ -116,7 +135,7 @@ class Datum
         }
 
         // Unspecified params will default to the WGS85 datum, with no transformations.
-        if ( ! isset($params)) {
+        if (empty($params)) {
             $params = [0, 0, 0];
             $this->name = 'WGS84';
             $this->code = 'WGS84';
@@ -124,15 +143,11 @@ class Datum
 
         $this->ellipsoid = $ellipsoid;
 
-        if (is_string($params)) {
-            // Supplied as CSV string, with no spaces in the string.
-            $params = explode(',', $params);
-        }
-
-        if ( ! is_array($params)) {
-            // No idea what the parameter is.
-            throw new Exception('Invalid parameter type');
-        }
+        // Maybe collect instead elements "0" to "2" or "0" to "6", Dx, Dy etc.
+        // Then the parameters could hold other arbitrary elements that could be useful.
+        // The Ordnance Survey lists the parameters in order (tx, ty, tz, S, rx, ry, rz)
+        // which differs by the numeric order Proj.4 uses with S on the end, so anything
+        // that could help avoid ambiguity would be good.
 
         if (count($params) == 3) {
             $this->type = static::TYPE_3TERM;
@@ -140,7 +155,9 @@ class Datum
             $this->type = static::TYPE_7TERM;
         } else {
             // Wrong number of parameter values.
-            throw new Exception(sprintf('Invalid parameter term count ("%d"); 3 or 7 terms supported', count($params)));
+            throw new Exception(sprintf(
+                'Invalid parameter term count ("%d"); 3 or 7 terms supported', count($params)
+            ));
         }
 
         // Make sure each parameter is a float when storing them.
@@ -170,7 +187,7 @@ class Datum
      */
     public function AsArray()
     {
-        return $this->params + ['ellps' => $this->ellipsoid->asArray()];
+        return $this->params + [AbstractPoint::ELLIPSOID_PARAM_NAME => $this->ellipsoid->asArray()];
     }
 
     /**
