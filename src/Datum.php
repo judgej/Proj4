@@ -33,6 +33,7 @@ class Datum
 
     // Convert seconds of arch to radians.
     // Pi/180/3600
+    // Deprecated: using deg2rad($seconds_of_arc / 3600)
     const SEC_TO_RAD = 4.84813681109535993589914102357e-6;
 
     /**
@@ -273,9 +274,9 @@ class Datum
 
             // The rotation parameters need converting from seconds of arc to radians.
             // Seconds of arc is the standard format in which datum rotations are supplied.
-            $Rx_BF = $this->params[3] * static::SEC_TO_RAD;
-            $Ry_BF = $this->params[4] * static::SEC_TO_RAD;
-            $Rz_BF = $this->params[5] * static::SEC_TO_RAD;
+            $Rx_BF = deg2rad($this->params[3] / 3600);
+            $Ry_BF = deg2rad($this->params[4] / 3600);
+            $Rz_BF = deg2rad($this->params[5] / 3600);
 
             // Convert parts-per-million scaling factor to a multiplier.
             $M_BF = 1 + ($this->params[6] * static::PPM_TO_MULT);
