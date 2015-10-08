@@ -119,8 +119,8 @@ class Geodetic extends AbstractPoint
     public function toGeocentric()
     {
         // Convert to radians.
-        $lat = $this->lat * static::D2R;
-        $lon = $this->lon * static::D2R;
+        $lat = deg2rad($this->lat);
+        $lon = deg2rad($this->lon);
 
         // Z value not always supplied
         $height = (isset($this->height) ? $this->height : 0);
@@ -283,8 +283,8 @@ class Geodetic extends AbstractPoint
         // Keep the same datum as the current point.
 
         $geodetic_point = new static(
-            $lat * static::R2D,
-            $lon * static::R2D,
+            rad2deg($lat),
+            rad2deg($lon),
             $height,
             $point->getDatum()
         );

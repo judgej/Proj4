@@ -10,6 +10,7 @@ abstract class AbstractPoint implements PointInterface
 {
     /**
      * Degrees to/from radians conversion.
+     * Deprecated (using PHP conversion functions).
      */
 
     const D2R = 0.01745329251994329577;
