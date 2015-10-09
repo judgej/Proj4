@@ -40,8 +40,10 @@ A few basic ideas are going into this project. They include:
 * composer compatibility
 * immutable objects where possible
 * testable (no surprises, globals, public properties being munged by classes)
-* Not be afraid of discarding some of the older Proj4JS ideas - restricture (e.g. multiple `Point` types,
+* Not be afraid of discarding some of the older Proj4JS ideas - restructure (e.g. multiple `Point` types,
   moving point conversions out of `Datum` and into the points.
+* But do make use of the fantastic code that has been developed for  Proj.4 ans its derivatives, by people
+  an awful lot cleverer than me :-)
 
 ## What Do We Have So Far?
 
