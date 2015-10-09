@@ -197,7 +197,7 @@ class Datum
         // The Ordnance Survey lists the parameters in order (tx, ty, tz, S, rx, ry, rz)
         // which differs by the numeric order Proj.4 uses with S on the end, so anything
         // that could help avoid ambiguity would be good.
-var_dump($trans);
+
         if (count($trans) == 3) {
             // Geocentric translation only.
             $this->type = static::TYPE_3TERM;
