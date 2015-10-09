@@ -222,6 +222,18 @@ point_castle_osgb36 = Array
 )
 ~~~
 
+The parameter library can be used to create objects like this:
+
+~~~php
+use Proj4\Params;
+
+// Just the Mod Airy ellipsoid
+$ellipsoid_mod_airy = new Ellipsoid($params->ellipsoid('mod_airy'));
+
+// The ire65 datum, which includes the Mod Airy ellipsoid and Helmert transform parameters.
+$datum_ire65 = new Datum($params->datum('ire65'));
+~~~
+
 These conversions are important, because many conversion operations can only be done on
 certain coordinate types, or using certain datums. All the more complex conersions will be
 built upon translating all these points to standard forms that can then be operated on.

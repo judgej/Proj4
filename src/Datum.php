@@ -114,43 +114,49 @@ class Datum
 
         if (is_array($params)) {
             foreach($params as $key => $value) {
-                switch (is_numeric($key) ? $key : strtolower($key)) {
-                    case 0:
+                switch (strtolower("$key")) {
+                    case '0':
                     case 'x':
                     case 'dx':
                         $trans[0] = (float)$value;
                         break;
-                    case 1:
+                    case '1':
                     case 'y':
                     case 'dy':
                         $trans[1] = (float)$value;
                         break;
-                    case 2:
+                    case '2':
                     case 'z':
                     case 'dz':
                         $trans[2] = (float)$value;
                         break;
-                    case 3:
+                    case '3':
                     case 'a':
                     case 'rx':
                         $trans[3] = (float)$value;
                         break;
-                    case 4:
+                    case '4':
                     case 'b':
                     case 'ry':
                         $trans[4] = (float)$value;
                         break;
-                    case 5:
+                    case '5':
                     case 'g':
                     case 'rz':
                         $trans[5] = (float)$value;
                         break;
-                    case 6:
+                    case '6':
                     case 's':
                     case 'm':
                         $trans[6] = (float)$value;
                         break;
+                    case 'towgs84':
+                        // All the transform parameters in an array in one element.
+                        $trans = array_map('floatval', $value);
+                        break;
                     case AbstractPoint::ELLIPSOID_PARAM_NAME:
+                    case 'ellipse':
+                    case 'ellipsoid':
                         if ($value instanceof Ellipsoid) {
                             $ellipsoid = $value;
                         } elseif (is_array($value)) {
@@ -191,7 +197,7 @@ class Datum
         // The Ordnance Survey lists the parameters in order (tx, ty, tz, S, rx, ry, rz)
         // which differs by the numeric order Proj.4 uses with S on the end, so anything
         // that could help avoid ambiguity would be good.
-
+var_dump($trans);
         if (count($trans) == 3) {
             // Geocentric translation only.
             $this->type = static::TYPE_3TERM;
