@@ -87,12 +87,8 @@ class Datum
      * A datum needs parameters to be defined.
      * These will be three parameters offering a spacial shift, or seven
      * parameters offering a spacial shift + reotations + scale.
-     * Paremeters can be supplied as an array, or a CSV scring.
      * Parameters can be left empty, in which case the datum defaults to
      * WGS84 (which is the reference datum, so no transformations are needed).
-     * TODO: handle the default datum (when no parameters supplied).
-     * TODO: move the parsing to a separate method so parameters can be changed later.
-     * TODO: handle the ellipse, as this is needed for geodetic/geocentric conversions
      * of points. Except - is the ellipse carried by the datum or the point? I think
      * it puts the point into context and is used only when converting between coordinate
      * systems (geodetic and geocentric).
@@ -105,27 +101,66 @@ class Datum
      * when defining a datum. WGS84 is the average approximate sea level ellipsoid which
      * is used as a reference. WGS84 ellipsoid is applied by default in Proj.4 if no
      * alternative is specified.
-     * TODO: fix this so we can pass in everything as a single array, compatible with the
-     * asArray() format.
+     * All intialisation parameters can be passed in as a single array.
+     * - Elements 0-2 or 0-6 are the 3-parameter transformation or 7-parameter Helmert transform values,
+     *   in order (dx, dy, dz, a, b, g, s) where a/b/g are the rotations (sec) and s is the scaling (ppm).
+     * - ellps is the ellipsoid, either as an Ellispoid object or an array for initialising.
+     * - code and name are the code and name values, not used in calculations but useful when tracing data.
      */
     public function __construct(array $params = null, Ellipsoid $ellipsoid = null)
     {
-        // If an "ellps" element has been included, then make that the ellipse.
-        if (isset($params) && isset($params['ellps'])) {
-            $ellps = $params[AbstractPoint::ELLIPSOID_PARAM_NAME];
+        // The translation parameters we will collect.
+        $trans = [];
 
-            // Remove it from the array.
-            unset($params[AbstractPoint::ELLIPSOID_PARAM_NAME]);
-
-            if ($ellps instanceof Ellipsoid) {
-                $ellipsoid = $ellps;
-            } elseif (is_array($ellps)) {
-                $ellipsoid = new Ellipsoid($ellps);
-            } else {
-                throw new Exception(sprintf(
-                    '"%s" element passed to Datum with unexpected data type',
-                    AbstractPoint::ELLIPSOID_PARAM_NAME
-                ));
+        if (is_array($params)) {
+            foreach($params as $key => $value) {
+                switch (is_numeric($key) ? $key : strtolower($key)) {
+                    case 0:
+                    case 'dx':
+                        $trans[0] = (float)$value;
+                        break;
+                    case 1:
+                    case 'dy':
+                        $trans[1] = (float)$value;
+                        break;
+                    case 2:
+                    case 'dz':
+                        $trans[2] = (float)$value;
+                        break;
+                    case 3:
+                    case 'a':
+                        $trans[3] = (float)$value;
+                        break;
+                    case 4:
+                    case 'b':
+                        $trans[4] = (float)$value;
+                        break;
+                    case 5:
+                    case 'g':
+                        $trans[5] = (float)$value;
+                        break;
+                    case 6:
+                    case 's':
+                        $trans[6] = (float)$value;
+                        break;
+                    case AbstractPoint::ELLIPSOID_PARAM_NAME:
+                        if ($value instanceof Ellipsoid) {
+                            $ellipsoid = $value;
+                        } elseif (is_array($value)) {
+                            $ellipsoid = new Ellipsoid($value);
+                        } else {
+                            throw new Exception(sprintf(
+                                '"%s" element passed to Datum with unexpected data type',
+                                AbstractPoint::ELLIPSOID_PARAM_NAME
+                            ));
+                        }
+                    case 'code':
+                        $this->code = $value;
+                        break;
+                    case 'name':
+                        $this->name = $value;
+                        break;
+                }
             }
         }
 
@@ -135,14 +170,14 @@ class Datum
             $ellipsoid = new Ellipsoid;
         }
 
-        // Unspecified params will default to the WGS85 datum, with no transformations.
-        if (empty($params)) {
-            $params = [0, 0, 0];
-            $this->name = 'WGS84';
-            $this->code = 'WGS84';
-        }
-
         $this->ellipsoid = $ellipsoid;
+
+        // Unspecified params will default to the WGS85 datum, with no transformations.
+        if (empty($trans)) {
+            $trans = [0, 0, 0];
+            $this->code = 'WGS84';
+            $this->name = 'WGS84';
+        }
 
         // Maybe collect instead elements "0" to "2" or "0" to "6", Dx, Dy etc.
         // Then the parameters could hold other arbitrary elements that could be useful.
@@ -150,21 +185,20 @@ class Datum
         // which differs by the numeric order Proj.4 uses with S on the end, so anything
         // that could help avoid ambiguity would be good.
 
-        if (count($params) == 3) {
+        if (count($trans) == 3) {
+            // Geocentric translation only.
             $this->type = static::TYPE_3TERM;
-        } elseif(count($params) == 7) {
+        } elseif(count($trans) == 7) {
+            // Helmert 7 parameter transform
             $this->type = static::TYPE_7TERM;
         } else {
             // Wrong number of parameter values.
             throw new Exception(sprintf(
-                'Invalid parameter term count ("%d"); 3 or 7 terms supported', count($params)
+                'Invalid parameter term count ("%d"); 3 or 7 terms supported', count($trans)
             ));
         }
 
-        // Make sure each parameter is a float when storing them.
-        foreach($params as $param) {
-            $this->params[] = (float)$param;
-        }
+        $this->params = $trans;
     }
 
     /**
@@ -184,11 +218,21 @@ class Datum
     }
 
     /**
-     * Return the translation parameters as an array.
+     * Return the object as an array.
      */
     public function AsArray()
     {
-        return $this->params + [AbstractPoint::ELLIPSOID_PARAM_NAME => $this->ellipsoid->asArray()];
+        $array = $this->params + [AbstractPoint::ELLIPSOID_PARAM_NAME => $this->ellipsoid->asArray()];
+
+        if ($this->getCode()) {
+            $array['code'] = $this->getCode();
+        }
+
+        if ($this->getName()) {
+            $array['name'] = $this->getName();
+        }
+
+        return $array;
     }
 
     /**
@@ -285,7 +329,7 @@ class Datum
             $y = $M_BF * ($Rz_BF * $point->x + $point->y - $Rx_BF * $point->z) + $Dy_BF;
             $z = $M_BF * (-$Ry_BF * $point->x + $Rx_BF * $point->y + $point->z) + $Dz_BF;
         } else {
-            throw new Excreption('Unknown datum transformation parameters type');
+            throw new Exception('Unknown datum transformation parameters type');
         }
 
         // Return a new point, with the new coordinates, and with a default WGS84 datum.
