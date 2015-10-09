@@ -116,31 +116,38 @@ class Datum
             foreach($params as $key => $value) {
                 switch (is_numeric($key) ? $key : strtolower($key)) {
                     case 0:
+                    case 'x':
                     case 'dx':
                         $trans[0] = (float)$value;
                         break;
                     case 1:
+                    case 'y':
                     case 'dy':
                         $trans[1] = (float)$value;
                         break;
                     case 2:
+                    case 'z':
                     case 'dz':
                         $trans[2] = (float)$value;
                         break;
                     case 3:
                     case 'a':
+                    case 'rx':
                         $trans[3] = (float)$value;
                         break;
                     case 4:
                     case 'b':
+                    case 'ry':
                         $trans[4] = (float)$value;
                         break;
                     case 5:
                     case 'g':
+                    case 'rz':
                         $trans[5] = (float)$value;
                         break;
                     case 6:
                     case 's':
+                    case 'm':
                         $trans[6] = (float)$value;
                         break;
                     case AbstractPoint::ELLIPSOID_PARAM_NAME:
