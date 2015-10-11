@@ -152,11 +152,11 @@ class Params
     /**
      * Return ellipsoid parameters.
      */
-    public function ellipsoid($name)
+    public function ellipsoid($key)
     {
-        if (isset($this->ellipsoids[strtolower($name)])) {
-            return $this->ellipsoids[$name] + ['code' => $name];
-        } elseif (isset($this->$ellipsoid_alias[$name])) {
+        if (isset($this->ellipsoids[strtolower($key)])) {
+            return $this->ellipsoids[$key] + ['code' => $key];
+        } elseif (isset($this->$ellipsoid_alias[$key])) {
             // Be careful no alias point to itself, otherwise you get an endless loop here.
             return $this->ellipsoid($this->$ellipsoid_alias[$name]);
         }
@@ -167,24 +167,24 @@ class Params
     /**
      * Return datum parameters.
      */
-    public function datum($name)
+    public function datum($key)
     {
-        if (isset($this->datums[strtolower($name)])) {
-            $datum = $this->datums[strtolower($name)];
+        if (isset($this->datums[strtolower($key)])) {
+            $datum = $this->datums[strtolower($key)];
 
             if ( ! isset($datum['code'])) {
-                $datum['code'] = $name;
+                $datum['code'] = $key;
             }
 
-            // Expand the ellipsoid name.
+            // Expand the ellipsoid key.
             if (is_string($datum['ellipsoid'])) {
                 $datum['ellipsoid'] = $this->ellipsoid($datum['ellipsoid']);
             }
 
             return $datum;
-        } elseif (isset($this->$datum_alias[$name])) {
+        } elseif (isset($this->$datum_alias[$key])) {
             // Be careful no alias point to itself, otherwise you get an endless loop here.
-            return $this->datum($this->$datum_alias[$name]);
+            return $this->datum($this->$datum_alias[$key]);
         }
 
         return [];

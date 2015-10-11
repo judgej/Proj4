@@ -29,20 +29,42 @@ class Geodetic extends AbstractPoint
      */
     public function __construct($lat, $lon = null, $height = null, Datum $datum = null)
     {
-        $this->setOrdinates($lat, $lon, $height);
-
-        // Was an datum passed in as an array element?
-        if (is_array($lat) && isset($lat[static::DATUM_PARAM_NAME])) {
-            $datum_data = $lat[static::DATUM_PARAM_NAME];
-
-            if ($datum_data instanceof Datum) {
-                // Ellipoid object supplied.
-                $datum = datum_data;
-            } elseif (is_array($ellsp)) {
-                // Array provided, so turn this into an Datum.
-                $datum = new Datum(datum_data);
+        if (is_array($lat)) {
+            // Parameters have been passed in as a single array - extract the values.
+            $params = $lat;
+            foreach($params as $key => $value) {
+                switch (strtolower("$key")) {
+                    case '0':
+                    case 'lat':
+                    case 'latitude':
+                        $lat = $value;
+                        break;
+                    case '1':
+                    case 'lon':
+                    case 'long':
+                    case 'longitude':
+                        $lon = $value;
+                        break;
+                    case '2':
+                    case 'height':
+                        $height = $value;
+                        break;
+                    case static::DATUM_PARAM_NAME:
+                        if ($value instanceof Datum) {
+                            // Ellipoid object supplied.
+                            $datum = $value;
+                        } elseif (is_array($ellsp)) {
+                            // Array provided, so turn this into an Datum.
+                            $datum = new Datum($value);
+                        }
+                        break;
+                }
             }
         }
+
+        // Set the ordinates.
+        // Units are degrees/degrees/metres, but may be in a variety of formats.
+        $this->setOrdinates($lat, $lon, $height);
 
         // If no datum supplied, then create a default (will be WGS84).
         if ( ! isset($datum)) {
@@ -74,6 +96,8 @@ class Geodetic extends AbstractPoint
             }
         }
 
+        // TODO: here check if any formats need parsing.
+
         $this->lat = $lat;
         $this->lon = $lon;
         $this->height = $height;
@@ -103,18 +127,37 @@ class Geodetic extends AbstractPoint
         ];
     }
 
+    /**
+     * Magic function to get the current values.
+     */
+    public function __get($name)
+    {
+        switch (strtolower($name)) {
+            case 'lat':
+            case 'latitude':
+                // Degrees.
+                return $this->lat;
+            case 'lon':
+            case 'long':
+            case 'longitude':
+                // Degrees.
+                return $this->lon;
+            case 'height':
+                // Metres.
+                return $this->height;
+            case 'latrad':
+                // Radians.
+                return (M_PI * $this->lat) / 180;
+            case 'lonrad':
+                // Radians.
+                return (M_PI * $this->lat) / 180;
+        }
+    }
+
     /*
      * The function Convert_Geodetic_To_Geocentric converts geodetic coordinates
      * (latitude, longitude, and height) to geocentric coordinates (X, Y, Z),
      * according to the current ellipsoid parameters.
-     *
-     *    Latitude  : Geodetic latitude in radians                     (input)
-     *    Longitude : Geodetic longitude in radians                    (input)
-     *    Height    : Geodetic height, in meters                       (input)
-     *    X         : Calculated Geocentric X coordinate, in meters    (output)
-     *    Y         : Calculated Geocentric Y coordinate, in meters    (output)
-     *    Z         : Calculated Geocentric Z coordinate, in meters    (output)
-     *
      */
     public function toGeocentric()
     {
@@ -129,9 +172,9 @@ class Geodetic extends AbstractPoint
         $Error_Code = 0;
 
         /*
-         * * Don't blow up if Latitude is just a little out of the value
-         * * range as it may just be a rounding issue.  Also removed longitude
-         * * test, it should be wrapped by cos() and sin().  NFW for PROJ.4, Sep/2001.
+         * Don't blow up if Latitude is just a little out of the value
+         * range as it may just be a rounding issue.  Also removed longitude
+         * test, it should be wrapped by cos() and sin().  NFW for PROJ.4, Sep/2001.
          */
 
         if ($lat < -M_PI_2 && $lat > -1.001 * M_PI_2) {

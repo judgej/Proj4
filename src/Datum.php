@@ -157,6 +157,11 @@ class Datum
                     case AbstractPoint::ELLIPSOID_PARAM_NAME:
                     case 'ellipse':
                     case 'ellipsoid':
+                        // The ellipsoid passed in take priority.
+                        if (isset($ellipsoid)) {
+                            break;
+                        }
+
                         if ($value instanceof Ellipsoid) {
                             $ellipsoid = $value;
                         } elseif (is_array($value)) {
