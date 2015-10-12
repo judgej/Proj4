@@ -1,6 +1,6 @@
-# Proj4
+# Proj (Geographic Coordinate Projection Conversion)
 
-Experiments in a Proj4 reboot
+Personal experiments in a Proj4 reboot.
 
 ## Introduction
 
@@ -70,10 +70,10 @@ Going straight to example code to show what we have at present, these are the co
 can do:
 
 ~~~php
-use Proj4\Datum;
-use Proj4\Ellipsoid;
-use Proj4\Points\Geocentric;
-use Proj4\Points\Geodetic;
+use Academe\Proj\Datum;
+use Academe\Proj\Ellipsoid;
+use Academe\Proj\Points\Geocentric;
+use Academe\Proj\Points\Geodetic;
 ~~~
 
 ~~~php
@@ -225,7 +225,7 @@ point_castle_osgb36 = Array
 The parameter library can be used to create objects like this:
 
 ~~~php
-use Proj4\Params;
+use Academe\Proj\Params;
 
 // Just the Mod Airy ellipsoid
 $ellipsoid_mod_airy = new Ellipsoid($params->ellipsoid('mod_airy'));
@@ -253,4 +253,4 @@ hinting.
 * A parser for PROJ.4 parameter strings.
 * Tables of common ellipsoids, datums, geographic reference systems, with the facility to inject more.  See Issue #2
 * Tests! I'm not good at these, so help will be appreciated.
-* Feeding ideas back into `Proj4php`.
+* Feeding ideas back into `proj4php`.
