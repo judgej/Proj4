@@ -1,4 +1,4 @@
-<?php namespace Proj4\Point;
+<?php namespace Academe\Proj\Point;
 
 /**
  * Defines a geocentric point.
@@ -18,8 +18,8 @@
 
 use Exception;
 
-use Proj4\Datum;
-use Proj4\AbstractPoint;
+use Academe\Proj\Datum;
+use Academe\Proj\AbstractPoint;
 
 class Geocentric extends AbstractPoint
 {

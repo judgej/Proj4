@@ -1,4 +1,4 @@
-<?php namespace Proj4;
+<?php namespace Academe\Proj;
 
 /**
  * Provide a library for lists of named parameters.

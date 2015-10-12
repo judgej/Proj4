@@ -1,4 +1,4 @@
-<?php namespace Proj4;
+<?php namespace Academe\Proj;
 
 /**
  * Interface for a geographic point.
@@ -6,7 +6,7 @@
 
 use Exception;
 
-use Proj4\Point\Geocentric;
+use Academe\Proj\Point\Geocentric;
 
 interface PointInterface
 {

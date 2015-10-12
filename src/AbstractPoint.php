@@ -1,4 +1,4 @@
-<?php namespace Proj4;
+<?php namespace Academe\Proj;
 
 /**
  * Methods and defines common to all (or most) points.

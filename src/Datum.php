@@ -1,4 +1,4 @@
-<?php namespace Proj4;
+<?php namespace Academe\Proj;
 
 /**
  * Defines a geodetic ellipsoidal datum.
@@ -10,7 +10,7 @@
  */
 
 use Exception;
-use Proj4\Point\Geocentric;
+use Academe\Proj\Point\Geocentric;
 
 class Datum
 {

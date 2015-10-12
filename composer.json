@@ -26,7 +26,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Proj4\\": "src/"
+            "Academe\\Proj\\": "src/"
         }
     }
 }
