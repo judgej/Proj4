@@ -156,9 +156,9 @@ class Params
     {
         if (isset($this->ellipsoids[strtolower($key)])) {
             return $this->ellipsoids[$key] + ['code' => $key];
-        } elseif (isset($this->$ellipsoid_alias[$key])) {
+        } elseif (isset($this->ellipsoid_alias[$key])) {
             // Be careful no alias point to itself, otherwise you get an endless loop here.
-            return $this->ellipsoid($this->$ellipsoid_alias[$name]);
+            return $this->ellipsoid($this->ellipsoid_alias[$name]);
         }
 
         return [];
@@ -182,9 +182,9 @@ class Params
             }
 
             return $datum;
-        } elseif (isset($this->$datum_alias[$key])) {
+        } elseif (isset($this->datum_alias[$key])) {
             // Be careful no alias point to itself, otherwise you get an endless loop here.
-            return $this->datum($this->$datum_alias[$key]);
+            return $this->datum($this->datum_alias[$key]);
         }
 
         return [];

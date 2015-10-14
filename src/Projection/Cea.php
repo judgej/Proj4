@@ -7,12 +7,29 @@
 use Academe\Proj\AbstractProjection;
 use Academe\Proj\Point\Geodetic;
 use Academe\Proj\PointInterface;
-use Academe\Proj\Point\Projected;
+use Academe\Proj\Point\Projection;
 
 class Cea extends AbstractProjection
 {
-    // Initialisation parameters.
-    // Are there sensible defaults?
+    /**
+     * The name of the projection.
+     */
+    protected $projection_name = 'CEA';
+
+    /**
+     * Coordinate can be supplied as:
+     *  [$x, $y]
+     *  ['x' => $x, 'y' => $y]
+     */
+    protected $coord_names = [
+        'x' => ['x', '0'],
+        'y' => ['y', '1'],
+    ];
+
+    /*
+     * Initialisation parameters.
+     * These are used in the transform calculations.
+     */
     protected $x0 = 0;
     protected $y0 = 0;
     protected $a = 6378137;
@@ -52,7 +69,7 @@ class Cea extends AbstractProjection
      * Convert a CEA point back to a geodetic point.
      * Just returns the array data for initialising a Geodetic point.
      */
-    public function inverse(Projected $point)
+    public function inverse(Projection $point)
     {
         $x = $point->x - $this->x0;
         $y = $point->y - $this->y0;

@@ -6,7 +6,7 @@
 
 use Exception;
 use Academe\Proj\Point\Geodetic;
-use Academe\Proj\Point\Projected;
+use Academe\Proj\Point\Projection as ProjectionPoint;
 
 interface ProjectionInterface
 {
@@ -19,5 +19,5 @@ interface ProjectionInterface
      * Convert the defined projection point to a deodetic (lat/lon) point.
      * Returns a Geodetic point.
      */
-    public function inverse(Projected $point);
+    public function inverse(ProjectionPoint $point);
 }

@@ -14,6 +14,14 @@ abstract class AbstractProjection implements ProjectionInterface
     // M_PI*2
     const TWO_PI = 6.283185307179586477;
 
+    protected $coord_names = [];
+
+    /**
+     * The name of the projection.
+     * Override for each projection.
+     */
+    protected $projection_name = 'AbstractProjection';
+
     /**
      * Initialise the projection with conversion parameters, defaulting
      * where necessary.
@@ -21,8 +29,25 @@ abstract class AbstractProjection implements ProjectionInterface
      * to support and how to validate them. Reflection may help here to give
      * us a list of properties at least.
      */
-    public function __construct(array $params)
+    public function __construct(array $params = null)
     {
+    }
+
+    /*
+     * Return the list of possible parameter names that a coordinate
+     * is constructed from.
+     */
+    public function coordinateNames()
+    {
+        return $this->coord_names;
+    }
+
+    /**
+     * The name of the projection.
+     */
+    public function getName()
+    {
+        return $this->projection_name;
     }
 
     /**
