@@ -7,7 +7,7 @@
 use Academe\Proj\AbstractProjection;
 use Academe\Proj\Point\Geodetic;
 use Academe\Proj\PointInterface;
-use Academe\Proj\Point\Projection;
+use Academe\Proj\Point\Projected;
 
 class Latlon extends AbstractProjection
 {
@@ -32,7 +32,7 @@ class Latlon extends AbstractProjection
         return clone $point;
     }
 
-    public function inverse(Projection $point)
+    public function inverse(Projected $point)
     {
         return clone $point;
     }

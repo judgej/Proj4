@@ -10,7 +10,7 @@ use Exception;
 
 use Academe\Proj\ProjectionInterface;
 
-class Projection
+class Projected
 {
     /**
      * The coordinate value - an array of parts.
@@ -136,5 +136,10 @@ class Projection
         }
 
         return $names;
+    }
+
+    public function asArray()
+    {
+        return $this->coords;
     }
 }
