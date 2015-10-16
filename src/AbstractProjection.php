@@ -26,7 +26,7 @@ abstract class AbstractProjection implements ProjectionInterface
     protected $coord_names = [];
 
     /**
-     * The name of the projection.
+     * The long name of the projection.
      * Override for each projection.
      */
     protected $projection_name = 'AbstractProjection';

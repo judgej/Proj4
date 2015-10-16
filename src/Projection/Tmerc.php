@@ -1,11 +1,14 @@
 <?php namespace Academe\Proj\Projection;
 
 /**
- * UTM projection.
- * TODO: this should simply extend the tmerc projection.
+ * Author : Julien Moquet
+ * 
+ * Inspired by Proj4JS from Mike Adair madairATdmsolutions.ca
+ *                      and Richard Greenwood rich@greenwoodma$p->com 
+ * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
  */
 /*******************************************************************************
-  NAME                            TRANSVERSE MERCATOR
+  NAME TRANSVERSE MERCATOR
 
   PURPOSE:	Transforms input longitude and latitude to Easting and
   Northing for the Transverse Mercator projection.  The
@@ -23,17 +26,21 @@
   Printing Office, Washington D.C., 1989.
 *******************************************************************************/
 
+/**
+  Initialize Transverse Mercator projection
+ */
+
 use Academe\Proj\AbstractProjection;
 use Academe\Proj\Point\Geodetic;
 use Academe\Proj\PointInterface;
 use Academe\Proj\Point\Projected;
 
-class Utm extends Tmerc
+class Tmerc extends AbstractProjection
 {
     /**
      * The name of the projection.
      */
-    protected $projection_name = 'Universal Transverse Mercator System';
+    protected $projection_name = 'Transverse Mercator';
 
     /**
      * Coordinate can be supplied as:
@@ -41,7 +48,6 @@ class Utm extends Tmerc
     protected $coord_names = [
         'x',
         'y',
-        'zone',
     ];
 
     /*
@@ -61,136 +67,123 @@ class Utm extends Tmerc
         'e1' => 0.0,
         'e2' => 0.0,
         'e3' => 0.0,
-        // TODO: rename this to simply "south".
-        // Is this actually part of the coordinate? e.g. the CN Tower is at "17N 630084 4833438" using
-        // North/South designator, or "17T 630084 4833438" using alphabetic lattitude desigator. So yes,
-        // this certainly does look like a coordiate. The way the UTM projection has been implemented,
-        // it looks like a square peg pushed into a round hole. I'd like to make the hole square too.
-        'utmSouth' => false,
     ];
 
-
-    // TODO: init should not really be needed.
-    // An initialisation of the parent projection should be done first.
-    // Also initialisation should be done each time values are changed (which if
-    // done as an immutable object, should mean on instantiation, so long as that is
-    // the only point at which parameters are set).
-    public function init() {
-        // TODO: zone will be a part of the point, not the projection.
-        if ( ! isset($this->zone)) {
-            throw new Exception('utm:init: zone must be specified for UTM');
-        }
-
-        // The constrants are defined in the declaratino section, so do not
-        // need to be repeated here,
-        $this->lat0 = 0.0;
-        // The zone is only used here.
-        $this->long0 = ((6 * abs($this->zone)) - 183) * Common::D2R;
-        $this->x0 = 500000.0;
-        // CHECKME: Where does utmSouth come from? It seems to be a boolean def parameter of "south"
-        // (true if present). We should just call it "south".
-        $this->y0 = $this->utmSouth ? 10000000.0 : 0.0;
-        $this->k0 = 0.9996;
-
+    /**
+     * 
+     */
+    public function init()
+    {
+        // FIXME: set $params, not individual properties.
         $this->e0 = $this->e0fn($this->es);
         $this->e1 = $this->e1fn($this->es);
         $this->e2 = $this->e2fn($this->es);
         $this->e3 = $this->e3fn($this->es);
-
         $this->ml0 = $this->a * $this->mlfn($this->e0, $this->e1, $this->e2, $this->e3, $this->lat0);
     }
 
-
     /**
-     * Convert from a Geodetic point to a UTM x/y point.
-     * CHECKME: the zone needs to be taken into account.
-     * Just returns the array data for initialising a CEA point.
+     * Transverse Mercator Forward  - long/lat to x/y
+     * lat/long in radians
      */
     public function forward(Geodetic $point)
     {
         $lat = $point->latrad;
-        $lon = $point->lomrad;
+        $lon = $point->lonrad;
 
-        // Delta longitude.
+        // Delta longitude
         $delta_lon = $this->adjust_lon($lon - $this->long0);
 
-        // $con = 0;    // cone constant
-        // $x = 0;
-        // $y = 0;
+        #$con = 0;    // cone constant
+        #$x = 0;
+        #$y = 0;
 
         $sin_phi = sin($lat);
         $cos_phi = cos($lat);
 
-        // TODO: how to derived $this->sphere?
+        // FIXME: where does sphere come from?
         if (isset($this->sphere) && $this->sphere === true) {
             // spherical form
             $b = $cos_phi * sin($delta_lon);
+
             if ((abs(abs($b) - 1.0)) < .0000000001) {
                 throw new Exception('tmerc:forward: Point projects into infinity');
-                return(93); // CHECKME: what is this?
             } else {
                 $x = 0.5 * $this->a * $this->k0 * log((1.0 + $b) / (1.0 - $b));
                 $con = acos($cos_phi * cos($delta_lon) / sqrt(1.0 - $b * $b));
+
                 if ($lat < 0) {
-                    $con =- $con;
+                    $con = - $con;
                 }
+
                 $y = $this->a * $this->k0 * ($con - $this->lat0);
             }
         } else {
             $al = $cos_phi * $delta_lon;
-            $als = pow( $al, 2 );
-            $c = $this->ep2 * pow( $cos_phi, 2 );
-            $tq = tan( $lat );
-            $t = pow( $tq, 2 );
-            $con = 1.0 - $this->es * pow( $sin_phi, 2 );
-            $n = $this->a / sqrt( $con );
+            $als = pow($al, 2);
+            $c = $this->ep2 * pow($cos_phi, 2);
+            $tq = tan($lat);
+            $t = pow($tq, 2);
+            $con = 1.0 - $this->es * pow($sin_phi, 2);
+            $n = $this->a / sqrt($con);
 
             $ml = $this->a * $this->mlfn($this->e0, $this->e1, $this->e2, $this->e3, $lat);
 
-            $x = $this->k0 * $n * $al * (1.0 + $als / 6.0 * (1.0 - $t + $c + $als / 20.0 * (5.0 - 18.0 * $t + pow($t, 2) + 72.0 * $c - 58.0 * $this->ep2))) + $this->x0;
-            $y = $this->k0 * ($ml - $this->ml0 + $n * $tq * ($als * (0.5 + $als / 24.0 * (5.0 - $t + 9.0 * $c + 4.0 * pow($c, 2) + $als / 30.0 * (61.0 - 58.0 * $t + pow($t, 2) + 600.0 * $c - 330.0 * $this->ep2))))) + $this->y0;
+            $x = $this->k0 * $n * $al
+                * (1.0 + $als / 6.0 * (1.0 - $t + $c + $als / 20.0 * (5.0 - 18.0 * $t + pow($t, 2) + 72.0 * $c - 58.0 * $this->ep2)))
+                + $this->x0;
+
+            $y = $this->k0
+                * ($ml - $this->ml0 + $n * $tq * ($als * (0.5 + $als / 24.0 * (5.0 - $t + 9.0 * $c + 4.0 * pow( $c, 2 ) + $als / 30.0 * (61.0 - 58.0 * $t + pow( $t, 2 ) + 600.0 * $c - 330.0 * $this->ep2)))))
+                + $this->y0;
         }
 
         return ['x' => $x, 'y' => $y];
     }
 
     /**
-     * Convert a CEA point back to a geodetic point.
-     * Just returns the array data for initialising a Geodetic point.
+     * Transverse Mercator Inverse  -  x/y to long/lat
      */
     public function inverse(Projected $point)
     {
-        // temporary angles
-        // $phi;
-        // difference between longitudes
-        // $delta_phi;
+        #$phi;  /* temporary angles       */
+        #$delta_phi; /* difference between longitudes    */
+        $max_iter = 6;      /* maximun number of iterations */
 
-        // maximun number of iterations
-        $max_iter = 6;
-        if (isset($this->sphere) && $this->sphere === true) {
-            // spherical form
+        // FIXME: where does the sphere come from?
+        if (isset($this->sphere) && $this->sphere === true ) {
+            //
+            // Spherical form.
+            //
+
             $f = exp($point->x / ($this->a * $this->k0));
             $g = 0.5 * ($f - 1 / $f);
             $temp = $this->lat0 + $point->y / ($this->a * $this->k0);
             $h = cos($temp);
             $con = sqrt((1.0 - $h * $h) / (1.0 + $g * $g));
-            $lat = this->asinz($con);
-            if ($temp < 0)
+            $lat = $this->asinz($con);
+
+            if ($temp < 0) {
                 $lat = -$lat;
+            }
+
             if (($g == 0) && ($h == 0)) {
                 $lon = $this->long0;
             } else {
                 $lon = $this->adjust_lon(atan2($g, $h) + $this->long0);
             }
         } else {
-            // ellipsoidal form
+            //
+            // Ellipsoidal form.
+            //
+
             $x = $point->x - $this->x0;
             $y = $point->y - $this->y0;
 
             $con = ($this->ml0 + $y / $this->k0) / $this->a;
             $phi = $con;
 
-            for ($i = 0; true; $i++ ) {
+            for ($i = 0; true; $i++) {
                 $delta_phi = (($con + $this->e1 * sin(2.0 * $phi) - $this->e2 * sin(4.0 * $phi) + $this->e3 * sin(6.0 * $phi)) / $this->e0) - $phi;
                 $phi += $delta_phi;
 
@@ -199,16 +192,17 @@ class Utm extends Tmerc
                 }
 
                 if ($i >= $max_iter) {
-                    raise new Exception('tmerc:inverse: Latitude failed to converge');
+                    throw new Exception('tmerc:inverse: Latitude failed to converge');
                 }
             }
 
-
             if (abs($phi) < M_PI_2) {
                 // sincos(phi, &sin_phi, &cos_phi);
+
                 $sin_phi = sin($phi);
                 $cos_phi = cos($phi);
                 $tan_phi = tan($phi);
+
                 $c = $this->ep2 * pow($cos_phi, 2);
                 $cs = pow($c, 2);
                 $t = pow($tan_phi, 2);
