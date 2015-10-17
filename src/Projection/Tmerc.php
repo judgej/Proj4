@@ -43,30 +43,45 @@ class Tmerc extends AbstractProjection
     protected $projection_name = 'Transverse Mercator';
 
     /**
-     * Coordinate can be supplied as:
+     * Coordinate can be supplied as: ['x' => $x, 'y' => $y]
      */
     protected $coord_names = [
-        'x',
-        'y',
+        'x' => ['x', 'e', 'easting'],
+        'y' => ['y', 'n', 'northing'],
     ];
 
     /*
      * Initialisation parameters.
      * These are used in the transform calculations.
+     * FIXME: many Projj4 parameters have underscores in, such as lat_0 and x_0. Where does that get#
+     * translated to lat0 and x0? Also lon_0 instead of long0, and k vs k0.
      */
     protected $params = [
+        // Latitude of origin.
         'lat0' => 0.0,
-        'long0' => 0.0, // ((6 * Math.abs(this.zone)) - 183) * D2R;
+        // Central meridian.
+        'long0' => 0.0,
         'a' => 0.0,
         'ep2' => 0.0,
+        // False easting.
         'x0' => 500000,
+        // False northing
         'y0' => 0.0,
+        // Scale factor.
         'k0' => 0.9996,
-        'ml0' => 0.0,
+        // Is this just a way to represent the ellipsoid (essentricy squared)?
+        // If so, then we can get it from the point when we need it.
+        // HOWEVER - a Projected point does not have an ellipsoid or datum, unlike Geodetic.
+        // Perhaps it needs one?
+        'es' => 0.0,
+
+        // CHECKME: do the following belong here, or are they just local
+        // intermediate variables?
         'e0' => 0.0,
         'e1' => 0.0,
         'e2' => 0.0,
         'e3' => 0.0,
+        'ml0' => 0.0,
     ];
 
     /**
@@ -74,12 +89,11 @@ class Tmerc extends AbstractProjection
      */
     public function init()
     {
-        // FIXME: set $params, not individual properties.
-        $this->e0 = $this->e0fn($this->es);
-        $this->e1 = $this->e1fn($this->es);
-        $this->e2 = $this->e2fn($this->es);
-        $this->e3 = $this->e3fn($this->es);
-        $this->ml0 = $this->a * $this->mlfn($this->e0, $this->e1, $this->e2, $this->e3, $this->lat0);
+        $this->setParam('e0', $this->e0fn($this->es));
+        $this->setParam('e1', $this->e1fn($this->es));
+        $this->setParam('e2', $this->e2fn($this->es));
+        $this->setParam('e3', $this->e3fn($this->es));
+        $this->setParam('ml0', $this->a * $this->mlfn($this->e0, $this->e1, $this->e2, $this->e3, $this->lat0));
     }
 
     /**
@@ -94,16 +108,17 @@ class Tmerc extends AbstractProjection
         // Delta longitude
         $delta_lon = $this->adjust_lon($lon - $this->long0);
 
-        #$con = 0;    // cone constant
-        #$x = 0;
-        #$y = 0;
-
         $sin_phi = sin($lat);
         $cos_phi = cos($lat);
 
-        // FIXME: where does sphere come from?
-        if (isset($this->sphere) && $this->sphere === true) {
-            // spherical form
+        // The point comes with its ellipsoid, so that is where we get the details from.
+        // Ask the ellipsoid whether it is a sphere.
+
+        if ($point->getEllipsoid()->isSphere()) {
+            //
+            // Spherical form.
+            //
+
             $b = $cos_phi * sin($delta_lon);
 
             if ((abs(abs($b) - 1.0)) < .0000000001) {
@@ -119,6 +134,10 @@ class Tmerc extends AbstractProjection
                 $y = $this->a * $this->k0 * ($con - $this->lat0);
             }
         } else {
+            //
+            // Ellipsoidal form.
+            //
+
             $al = $cos_phi * $delta_lon;
             $als = pow($al, 2);
             $c = $this->ep2 * pow($cos_phi, 2);
@@ -146,12 +165,10 @@ class Tmerc extends AbstractProjection
      */
     public function inverse(Projected $point)
     {
-        #$phi;  /* temporary angles       */
-        #$delta_phi; /* difference between longitudes    */
-        $max_iter = 6;      /* maximun number of iterations */
+        // maximun number of iterations
+        $max_iter = 6;
 
-        // FIXME: where does the sphere come from?
-        if (isset($this->sphere) && $this->sphere === true ) {
+        if ($point->getEllipsoid()->isSphere()) {
             //
             // Spherical form.
             //

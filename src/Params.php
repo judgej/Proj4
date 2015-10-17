@@ -7,6 +7,9 @@
  * involve a remote API lookup.
  * This class does not create the geo objects, but provides
  * the data (arrays) that can be used to initialise them.
+ *
+ * A great (and short) explanation of the source of the projection definitions here:
+ * https://www.nceas.ucsb.edu/scicomp/recipes/projections
  */
 
 use Exception;
@@ -61,6 +64,7 @@ class Params
     ];
 
     // Mixed or upper-case ellipsoid codes go into the aliases list.
+    // We will probably want to put the EPSG codes in too, if there are equivalents.
 
     protected $ellipsoid_alias = [
         'MERIT' => 'merit',
@@ -165,6 +169,14 @@ class Params
     }
 
     /**
+     * Alias for allipsoid.
+     */
+    public function ellps($key)
+    {
+        return $this->ellipsoid($key);
+    }
+
+    /**
      * Return datum parameters.
      */
     public function datum($key)
@@ -188,5 +200,13 @@ class Params
         }
 
         return [];
+    }
+
+    /**
+     * Return proj parameters.
+     */
+    public function proj($key)
+    {
+        // TODO
     }
 }

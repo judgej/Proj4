@@ -70,6 +70,9 @@ abstract class AbstractProjection implements ProjectionInterface
 
     /**
      * Set a simgle parameter.
+     * This is protected to support immutability.
+     * We can also implement validation here, so make sure numbers
+     * are in range etc.
      */
     protected function setParam($name, $value)
     {
@@ -99,6 +102,16 @@ abstract class AbstractProjection implements ProjectionInterface
                 ! empty($this->params) ? '"' . implode('", "', array_keys($this->params)) . '"' : '<none>'
             ));
         }
+    }
+
+    /**
+     * Magic method to tell if a parameter is set.
+     */
+    public function __isset($name)
+    {
+        $value = $this->$name;
+
+        return isset($value);
     }
 
     /**

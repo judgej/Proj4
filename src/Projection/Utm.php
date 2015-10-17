@@ -36,11 +36,12 @@ class Utm extends Tmerc
     protected $projection_name = 'Universal Transverse Mercator System';
 
     /**
-     * Coordinate can be supplied as:
+     * Coordinate can be supplied as: ['x' => $x, 'y' => $y, 'zone' => $zone]
+     * TODO: include the north/south indicator here.
      */
     protected $coord_names = [
-        'x',
-        'y',
+        'x' => ['x', 'e', 'easting'],
+        'y' => ['y', 'n', 'northing'],
         'zone',
     ];
 
@@ -50,10 +51,10 @@ class Utm extends Tmerc
      */
     protected $params = [
         'lat0' => 0.0,
-        'long0' => 0.0, // ((6 * Math.abs(this.zone)) - 183) * D2R;
+        'long0' => 0.0,
         'a' => 0.0,
         'ep2' => 0.0,
-        'x0' => 500000,
+        'x0' => 500000.0,
         'y0' => 0.0,
         'k0' => 0.9996,
         'ml0' => 0.0,
@@ -75,29 +76,18 @@ class Utm extends Tmerc
     // Also initialisation should be done each time values are changed (which if
     // done as an immutable object, should mean on instantiation, so long as that is
     // the only point at which parameters are set).
+    // FIXME: there is actually no real "init" here - the zone and hemisphere indicators
+    // come from the points, and are so only needed then.
     public function init() {
-        // TODO: zone will be a part of the point, not the projection.
-        if ( ! isset($this->zone)) {
-            throw new Exception('utm:init: zone must be specified for UTM');
-        }
+        parent::init();
 
-        // The constrants are defined in the declaratino section, so do not
-        // need to be repeated here,
-        $this->lat0 = 0.0;
         // The zone is only used here.
+        // FIXME: The zone is now on the *point*.
         $this->long0 = ((6 * abs($this->zone)) - 183) * Common::D2R;
-        $this->x0 = 500000.0;
-        // CHECKME: Where does utmSouth come from? It seems to be a boolean def parameter of "south"
+
+        // FIXME: Where does utmSouth come from? It seems to be a boolean def parameter of "south"
         // (true if present). We should just call it "south".
         $this->y0 = $this->utmSouth ? 10000000.0 : 0.0;
-        $this->k0 = 0.9996;
-
-        $this->e0 = $this->e0fn($this->es);
-        $this->e1 = $this->e1fn($this->es);
-        $this->e2 = $this->e2fn($this->es);
-        $this->e3 = $this->e3fn($this->es);
-
-        $this->ml0 = $this->a * $this->mlfn($this->e0, $this->e1, $this->e2, $this->e3, $this->lat0);
     }
 
 
@@ -108,6 +98,8 @@ class Utm extends Tmerc
      */
     public function forward(Geodetic $point)
     {
+        return parent::forward($point);
+
         $lat = $point->latrad;
         $lon = $point->lomrad;
 
@@ -160,6 +152,8 @@ class Utm extends Tmerc
      */
     public function inverse(Projected $point)
     {
+        return parent::inverse($point);
+
         // temporary angles
         // $phi;
         // difference between longitudes

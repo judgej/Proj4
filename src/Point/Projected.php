@@ -36,6 +36,7 @@ class Projected
      * CHECKME: do we need to intialise anything in the projection? For example,
      * do any of the projection parameters depend on the ellipsoid of the point?
      * Probably not, as the point will have to be WGS84 to go throwgh these conversions.
+     * FIXME: I think we need a datum here - the projection needs to know about it at least.
      */
     public function __construct(array $params, ProjectionInterface $projection)
     {

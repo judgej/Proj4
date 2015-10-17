@@ -313,7 +313,7 @@ class Ellipsoid
 
     /**
      * Magic getter access to the parameters.
-     * TODO: return somethign sensible for 'ellps'.
+     * TODO: return something sensible for 'ellps'.
      */
     public function __get($name)
     {
@@ -340,7 +340,24 @@ class Ellipsoid
                 return $this->name;
         }
 
-        // TODO: exception - unknown property.
+        // Unknown property.
+        throw new Exception(sprintf(
+            'Unknown parameter "%s" for ellipoid "%s"',
+            $name,
+            $this->name
+        ));
+    }
+
+    /**
+     * Magic method to check if a parameter is set.
+     * CHECKME: should we ever be allowed to raise an exception in __isset()? Just
+     * a hunch we shouldn't.
+     */
+    public function __isset($name)
+    {
+        $value = $this->$name;
+
+        return isset($value);
     }
 
     /**
@@ -375,36 +392,11 @@ class Ellipsoid
     }
 
     /**
-     * Magic getter access to the parameters.
-     * TODO: handle 'ellps'.
-     * TODO: with magic setters, this object is strictly no longer immutable.
-     * Consider removing them.
+     * Indicate whether this ellipsoid is a sphere or not.
+     * TODO: needs some kind of error margin.
      */
-    /*
-    public function __set($name, $value)
+    public function isSphere()
     {
-        switch (strtolower($name)) {
-            case 'a':
-                $this->a = (float)$value;
-                return;
-            case 'b':
-                $this->setB($value);
-                return;
-            case 'f':
-                $this->setF($value);
-                return;
-            case 'rf':
-                $this->setRF($value);
-                return;
-            case 'code':
-                $this->code = $vslue;
-                return;
-            case 'name':
-                $this->name = $value;
-                return;
-        }
-
-        // TODO: exception - unknown property.
+        return ($this->a == $this->b);
     }
-    */
 }
