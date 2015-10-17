@@ -30,7 +30,10 @@
   Initialize Transverse Mercator projection
  */
 
+use Exception;
+
 use Academe\Proj\AbstractProjection;
+use Academe\Proj\Ellipsoid;
 use Academe\Proj\Point\Geodetic;
 use Academe\Proj\PointInterface;
 use Academe\Proj\Point\Projected;
@@ -54,50 +57,104 @@ class Tmerc extends AbstractProjection
      * Initialisation parameters.
      * These are used in the transform calculations.
      * FIXME: many Projj4 parameters have underscores in, such as lat_0 and x_0. Where does that get#
-     * translated to lat0 and x0? Also lon_0 instead of long0, and k vs k0.
+     * translated to lat0 and x0? Also lon_0 instead of long0, and k vs both k0 and k_0.
      */
     protected $params = [
-        // Latitude of origin.
+        // Latitude of origin, aka lat_0.
         'lat0' => 0.0,
-        // Central meridian.
+        // Central meridian, aka lon_0.
         'long0' => 0.0,
-        'a' => 0.0,
-        'ep2' => 0.0,
-        // False easting.
-        'x0' => 500000,
-        // False northing
-        'y0' => 0.0,
-        // Scale factor.
-        'k0' => 0.9996,
-        // Is this just a way to represent the ellipsoid (essentricy squared)?
-        // If so, then we can get it from the point when we need it.
-        // HOWEVER - a Projected point does not have an ellipsoid or datum, unlike Geodetic.
-        // Perhaps it needs one?
-        'es' => 0.0,
 
-        // CHECKME: do the following belong here, or are they just local
-        // intermediate variables?
-        'e0' => 0.0,
-        'e1' => 0.0,
-        'e2' => 0.0,
-        'e3' => 0.0,
-        'ml0' => 0.0,
+        // Both required, but will be derived from other sources if not set directly.
+        'a' => null,
+        'es' => null,
+
+        // Alternative ellipsoid parameters (optional).
+        'b' => null,
+        'rf' => null,
+        'ellps' => null,
+
+        // What is this?
+        'ep2' => 0.0,
+
+        // False easting, aka x_0.
+        'x0' => 500000,
+        // False northing, aka y_0.
+        'y0' => 0.0,
+        // Scale factor, aka k.
+        'k0' => 0.9996,
     ];
 
     /**
-     * 
+     * Calculated values derived from other parameters.
      */
-    public function init()
+    protected $is_sphere = true;
+
+    protected $e0 = 0.0;
+    protected $e1 = 0.0;
+    protected $e2 = 0.0;
+    protected $e3 = 0.0;
+    protected $ml0 = 0.0;
+
+    // Maximun number of iterations in the inverse conversion.
+    protected $max_iter = 6;
+
+    /**
+     * Initialise some derived values.
+     */
+    public function init(Geodetic $point = null)
     {
-        $this->setParam('e0', $this->e0fn($this->es));
-        $this->setParam('e1', $this->e1fn($this->es));
-        $this->setParam('e2', $this->e2fn($this->es));
-        $this->setParam('e3', $this->e3fn($this->es));
-        $this->setParam('ml0', $this->a * $this->mlfn($this->e0, $this->e1, $this->e2, $this->e3, $this->lat0));
+        // We need 'a' and 'es' - the ellipsoid semi-major axis and essentricity squared.
+        // Also need to know if this is a sphere.
+        // That can come from a number of sources, so we will work through what we
+        // have to find or derive it.
+        // Maybe we just create an ellipsoid with what we have, and read off what we need?
+        // That why we *always* have an ellipsoid to work from.
+        // We are either given an ellisoid, given ellisoid parameters, or have one in the point.
+
+        // If we don't have "a" and "es" directly, then we need to derive them.
+        if ( ! isset($this->a) || ! isset($this->es)) {
+            if (isset($this->ellps) && $this->ellps instanceof Ellipsoid) {
+                // An ellisoid was passed in.
+
+                $ellps = $this->ellps;
+            } elseif (isset($this->a) || isset($this->es) || isset($this->b) || isset($this->rf) || isset($this->es)) {
+                // Create an ellipsoid from the parameters provided.
+
+                $ellps = new Ellipsoid([
+                    'a' => $this->a,
+                    'b' => $this->b,
+                    'rf' => $this->rf,
+                    'es' => $this->es,
+                ]);
+            } elseif (isset($point)) {
+                // Get the ellipsoid from the geodetic point passed in.
+
+                $ellps = $point->getEllipsoid();
+            }
+
+            // If we have an ellipsoid now, then read off what we need.
+            if ( ! empty($ellps)) {
+                $this->setParam('a', $ellps->a);
+                $this->setParam('es', $ellps->es);
+                $this->is_sphere = $ellps->isSphere();
+            } else {
+                throw new Exception(sprintf(
+                    'Missing "a" and "es", or alternative ellipsoid details'
+                ));
+            }
+        }
+
+        $this->e0 = $this->e0fn($this->es);
+        $this->e1 = $this->e1fn($this->es);
+        $this->e2 = $this->e2fn($this->es);
+        $this->e3 = $this->e3fn($this->es);
+
+        $this->ml0 = $this->a * $this->mlfn($this->e0, $this->e1, $this->e2, $this->e3, $this->lat0);
     }
 
     /**
-     * Transverse Mercator Forward  - long/lat to x/y
+     * Transverse Mercator Forward  - lon/lat to x/y/zone/???
      * lat/long in radians
      */
     public function forward(Geodetic $point)
@@ -105,16 +162,20 @@ class Tmerc extends AbstractProjection
         $lat = $point->latrad;
         $lon = $point->lonrad;
 
+        // Initialise some calculated values.
+        $this->init($point);
+
         // Delta longitude
         $delta_lon = $this->adjust_lon($lon - $this->long0);
 
         $sin_phi = sin($lat);
         $cos_phi = cos($lat);
 
-        // The point comes with its ellipsoid, so that is where we get the details from.
+        // The point comes with its ellipsoid, so that is where we can get the details from
+        // if not overridden.
         // Ask the ellipsoid whether it is a sphere.
 
-        if ($point->getEllipsoid()->isSphere()) {
+        if ($this->is_sphere) {
             //
             // Spherical form.
             //
@@ -165,10 +226,10 @@ class Tmerc extends AbstractProjection
      */
     public function inverse(Projected $point)
     {
-        // maximun number of iterations
-        $max_iter = 6;
+        // Initialise some calculated values.
+        $this->init();
 
-        if ($point->getEllipsoid()->isSphere()) {
+        if ($this->is_sphere) {
             //
             // Spherical form.
             //
@@ -208,8 +269,11 @@ class Tmerc extends AbstractProjection
                     break;
                 }
 
-                if ($i >= $max_iter) {
-                    throw new Exception('tmerc:inverse: Latitude failed to converge');
+                if ($i >= $this->max_iter) {
+                    throw new Exception(sprintf(
+                        'tmerc:inverse: Latitude failed to converge after %d iterations',
+                        $this->max_iter
+                    ));
                 }
             }
 

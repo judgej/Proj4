@@ -97,6 +97,9 @@ class Ellipsoid
                 case 'rf':
                     $this->setRF($value);
                     break;
+                case 'es':
+                    // TODO: set the essentricity squared, and use that to derive other values.
+                    break;
                 case 'code':
                     $this->code = $value;
                     break;
