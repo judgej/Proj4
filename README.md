@@ -245,11 +245,12 @@ $projection = new Academe\Proj\Projection\Tmerc([
 $projected = new Projected(['x' => -98360, 'y' => 5986957], $projection);
 
 // Lets turn this into a lat/lon coordinate.
-// $projected->inverse() gives us the Geodetic initialisation values (in radian).
-$inverse = new Geodetic($projected->inverse());
+// $projected->inverse() gives us the Geodetic initialisation values (in radians).
+// The ellipsoid will be retained in the geodetic coordinate (actually no - this is a TODO).
+$geodetic = new Geodetic($projected->inverse());
 
 // So where are we?
-echo "lat=" . $inverse->lat . " lon=" . $inverse->lon;
+echo "lat=" . $geodetic->lat . " lon=" . $geodetic->lon;
 // lat=53.9999 lon=-1.49999 (North UK)
 ~~~
 

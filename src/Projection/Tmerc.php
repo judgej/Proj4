@@ -317,6 +317,7 @@ class Tmerc extends AbstractProjection
         }
 
         // The result is given in radians.
+        // TODO: the lat/lon is no use without some context; the ellipsoid is needed.
         return ['latrad' => $lat, 'lonrad' => $lon];
     }
 }
