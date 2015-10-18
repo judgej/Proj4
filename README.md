@@ -222,6 +222,37 @@ point_castle_osgb36 = Array
 )
 ~~~
 
+Converting a transverse mercator coordinate to lat/lon.
+
+~~~php
+// Parameter library
+$params = new Params();
+
+// The ellipsoid we want to use.
+$ellps = new Ellipsoid($params->ellps('wgs84'));
+
+// A very simple transvers marcator projection, with the central meridian at 0.
+$projection = new Academe\Proj\Projection\Tmerc([
+    'lat0' => deg2rad(0), // the equator; would generally be shifted North
+    'x0' => 0,
+    'y0' => 0,
+    'lon0' => deg2rad(0), // central meridian
+    'k0' => 1.0,
+    'ellps' => $ellps,
+]);
+
+// A point that uses this projection, 98km West and 5988km North of the (ellipsoid) equator.
+$projected = new Projected(['x' => -98360, 'y' => 5986957], $projection);
+
+// Lets turn this into a lat/lon coordinate.
+// $projected->inverse() gives us the Geodetic initialisation values (in radian).
+$inverse = new Geodetic($projected->inverse());
+
+// So where are we?
+echo "lat=" . $inverse->lat . " lon=" . $inverse->lon;
+// lat=53.9999 lon=-1.49999 (North UK)
+~~~
+
 The parameter library can be used to create objects like this:
 
 ~~~php

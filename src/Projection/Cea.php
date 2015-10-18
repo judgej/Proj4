@@ -49,7 +49,7 @@ class Cea extends AbstractProjection
         $lat = $point->latrad;
         $lon = $point->lonrad;
 
-        $dlon = $this->adjust_lon($lon - $this->long0);
+        $dlon = $this->adjustLon($lon - $this->long0);
 
         $x = $this->x0 + $this->a * $dlon * cos($this->lat_ts);
         $y = $this->y0 + $this->a * sin($lat) / cos($this->lat_ts);
@@ -76,7 +76,7 @@ class Cea extends AbstractProjection
         $x = $point->x - $this->x0;
         $y = $point->y - $this->y0;
 
-        $lon = $this->adjust_lon($this->long0 + ($x / $this->a) / cos($this->lat_ts));
+        $lon = $this->adjustLon($this->long0 + ($x / $this->a) / cos($this->lat_ts));
         $lat = asin(($y / $this->a) * cos($this->lat_ts));
 
         // The result is given in radians.

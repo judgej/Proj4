@@ -126,26 +126,36 @@ abstract class AbstractProjection implements ProjectionInterface
      * Utility methods used by many of the forward/inverse conversions.
      */
 
-    protected function adjust_lon($x)
+    /**
+     * Adjust longitude to -PI to +PI (-180 to +180 degrees); input in radians.
+     */
+    protected function adjustLon($lon)
     {
-        return (abs($x) < M_PI) ? $x : ($x - ($this->sign($x) * statis::TWO_PI));
+        return (abs($lon) < M_PI) ? $lon : ($lon - ($this->sign($lon) * static::TWO_PI));
     }
  
-    protected function sign($x)
+    /**
+     * Adjust latitude to -PI/2 to +PI/2 (-90 to +90 degrees); input in radians.
+     */
+    protected function adjustLat($lat)
     {
-        return $x < 0.0 ? -1 : 1;
+        return (abs($lat) < M_PI_2) ? $lat : ($lat - ($this->sign($lat) * M_PI));
     }
-
+ 
+    protected function sign($num)
+    {
+        return $num < 0.0 ? -1 : 1;
+    }
 
     /**
      * following functions from gctpc cproj.c for transverse mercator projections
      * 
-     * @param type $x
+     * @param type $x == es == essentricity squared
      * @return type
      */
     protected function e0fn($x)
     {
-        return (1.0 - 0.25 * $x * (1.0 + $x / 16.0 * (3.0 + 1.25 * $x)));
+        return (1.0 - ($x / 4.0) * (1.0 + $x / 16.0 * (3.0 + 1.25 * $x)));
     }
 
     /**
@@ -186,6 +196,7 @@ abstract class AbstractProjection implements ProjectionInterface
         return asin(
             abs($x) > 1.0 ? ($x > 1.0 ? 1.0 : -1.0) : $x 
         );
+
         //if( abs( $x ) > 1.0 ) {
         //    $x = ($x > 1.0) ? 1.0 : -1.0;
         //}

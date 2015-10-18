@@ -89,13 +89,19 @@ class Ellipsoid
                     $this->a = (float)$value;
                     break;
                 case 'b':
-                    $this->setB($value);
+                    if (isset($value)) {
+                        $this->setB($value);
+                    }
                     break;
                 case 'f':
-                    $this->setF($value);
+                    if (isset($value)) {
+                        $this->setF($value);
+                    }
                     break;
                 case 'rf':
-                    $this->setRF($value);
+                    if (isset($value)) {
+                        $this->setRF($value);
+                    }
                     break;
                 case 'es':
                     // TODO: set the essentricity squared, and use that to derive other values.
@@ -205,6 +211,7 @@ class Ellipsoid
 
     /**
      * Get 'f', deriving it if necessary.
+     * This will be infinite for a sphere.
      */
     public function getF()
     {
@@ -298,6 +305,7 @@ class Ellipsoid
             return ($a2 - $b2) / $a2;
         } else {
             // Otherwise use f.
+            // FIXME: F will be infinite for a sphere. Can we use RF?
             $f = $this->getF();
 
             return (2 * $f) - ($f * $f);

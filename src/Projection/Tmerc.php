@@ -57,36 +57,41 @@ class Tmerc extends AbstractProjection
      * Initialisation parameters.
      * These are used in the transform calculations.
      * FIXME: many Projj4 parameters have underscores in, such as lat_0 and x_0. Where does that get#
-     * translated to lat0 and x0? Also lon_0 instead of long0, and k vs both k0 and k_0.
+     * translated to lat0 and x0? Also lon_0 instead of lon0, and k vs both k0 and k_0.
      */
     protected $params = [
+        // These two angles are in radians, not degrees.
         // Latitude of origin, aka lat_0.
         'lat0' => 0.0,
         // Central meridian, aka lon_0.
-        'long0' => 0.0,
+        'lon0' => 0.0,
 
         // Both required, but will be derived from other sources if not set directly.
+        // es, essentricity squared is 2f -f^2, where f is the flattening.
         'a' => null,
         'es' => null,
 
-        // Alternative ellipsoid parameters (optional).
+        // Alternative ellipsoid parameters used to derive "a" and "es" (optional).
         'b' => null,
         'rf' => null,
         'ellps' => null,
 
         // What is this?
+        // Found this in proj4phpProj.php:
+        // $this->ep2 = ($this->a2 - $this->b2) / $this->b2; // used in geocentric
+        // Is it the inverse reciprocal flattening, or something?
         'ep2' => 0.0,
 
         // False easting, aka x_0.
         'x0' => 500000,
         // False northing, aka y_0.
         'y0' => 0.0,
-        // Scale factor, aka k.
-        'k0' => 0.9996,
+        // Central meridian scale factor, aka k.
+        'k0' => 1.0, // 0.9996 for UTM
     ];
 
     /**
-     * Calculated values derived from other parameters.
+     * Calculated values derived from other parameters in init().
      */
     protected $is_sphere = true;
 
@@ -111,6 +116,8 @@ class Tmerc extends AbstractProjection
         // Maybe we just create an ellipsoid with what we have, and read off what we need?
         // That why we *always* have an ellipsoid to work from.
         // We are either given an ellisoid, given ellisoid parameters, or have one in the point.
+        // TODO: think about whether all this helpful deriving should be done elsewhere and making
+        // a ready-made ellipsoid *or* a+es mandatory parameters.
 
         // If we don't have "a" and "es" directly, then we need to derive them.
         if ( ! isset($this->a) || ! isset($this->es)) {
@@ -154,8 +161,7 @@ class Tmerc extends AbstractProjection
     }
 
     /**
-     * Transverse Mercator Forward  - lon/lat to x/y/zone/???
-     * lat/long in radians
+     * Transverse Mercator Forward  - lon/lat to x/y
      */
     public function forward(Geodetic $point)
     {
@@ -166,7 +172,7 @@ class Tmerc extends AbstractProjection
         $this->init($point);
 
         // Delta longitude
-        $delta_lon = $this->adjust_lon($lon - $this->long0);
+        $delta_lon = $this->adjustLon($lon - $this->lon0);
 
         $sin_phi = sin($lat);
         $cos_phi = cos($lat);
@@ -189,7 +195,8 @@ class Tmerc extends AbstractProjection
                 $con = acos($cos_phi * cos($delta_lon) / sqrt(1.0 - $b * $b));
 
                 if ($lat < 0) {
-                    $con = - $con;
+                    // Chnage the sign.
+                    $con = -$con;
                 }
 
                 $y = $this->a * $this->k0 * ($con - $this->lat0);
@@ -222,7 +229,15 @@ class Tmerc extends AbstractProjection
     }
 
     /**
-     * Transverse Mercator Inverse  -  x/y to long/lat
+     * Transverse Mercator Inverse  -  x/y to lon/lat (in radians).
+     * FIXME: the x and y have limits, as the resulting longitude must be
+     * within 4 degrees of the central meridian. Without bound checking, the
+     * results will be wildly wrong when going beyond about 450km on the x axis.
+     * Similarly, the y is limited to a distance from lat0 to within about
+     * 15 degrees of the poles (actually that is probably wrong, as that should
+     * apply to the standard mercator projection; with transverse we can go right
+     * up to the poles, with the distance to the poles depending on the ellipsoid
+     * dimensiona and lat0).
      */
     public function inverse(Projected $point)
     {
@@ -246,9 +261,9 @@ class Tmerc extends AbstractProjection
             }
 
             if (($g == 0) && ($h == 0)) {
-                $lon = $this->long0;
+                $lon = $this->lon0;
             } else {
-                $lon = $this->adjust_lon(atan2($g, $h) + $this->long0);
+                $lon = $this->adjustLon(atan2($g, $h) + $this->lon0);
             }
         } else {
             //
@@ -294,10 +309,10 @@ class Tmerc extends AbstractProjection
                 $d = $x / ($n * $this->k0);
                 $ds = pow($d, 2);
                 $lat = $phi - ($n * $tan_phi * $ds / $r) * (0.5 - $ds / 24.0 * (5.0 + 3.0 * $t + 10.0 * $c - 4.0 * $cs - 9.0 * $this->ep2 - $ds / 30.0 * (61.0 + 90.0 * $t + 298.0 * $c + 45.0 * $ts - 252.0 * $this->ep2 - 3.0 * $cs)));
-                $lon = $this->adjust_lon($this->long0 + ($d * (1.0 - $ds / 6.0 * (1.0 + 2.0 * $t + $c - $ds / 20.0 * (5.0 - 2.0 * $c + 28.0 * $t - 3.0 * $cs + 8.0 * $this->ep2 + 24.0 * $ts))) / $cos_phi));
+                $lon = $this->adjustLon($this->lon0 + ($d * (1.0 - $ds / 6.0 * (1.0 + 2.0 * $t + $c - $ds / 20.0 * (5.0 - 2.0 * $c + 28.0 * $t - 3.0 * $cs + 8.0 * $this->ep2 + 24.0 * $ts))) / $cos_phi));
             } else {
                 $lat = M_PI_2 * $this->sign($y);
-                $lon = $this->long0;
+                $lon = $this->lon0;
             }
         }
 

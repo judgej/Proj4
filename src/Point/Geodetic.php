@@ -49,6 +49,12 @@ class Geodetic extends AbstractPoint
                     case 'height':
                         $height = $value;
                         break;
+                    case 'latrad':
+                        $lat = rad2deg($value);
+                        break;
+                    case 'lonrad':
+                        $lon = rad2deg($value);
+                        break;
                     case static::DATUM_PARAM_NAME:
                         if ($value instanceof Datum) {
                             // Ellipoid object supplied.
@@ -146,11 +152,11 @@ class Geodetic extends AbstractPoint
                 // Metres.
                 return $this->height;
             case 'latrad':
-                // Radians.
-                return (M_PI * $this->lat) / 180;
+                // Convert degrees to radians.
+                return deg2rad($this->lat);
             case 'lonrad':
-                // Radians.
-                return (M_PI * $this->lat) / 180;
+                // Convert degrees to radians.
+                return deg2rad($this->lat);
         }
     }
 
