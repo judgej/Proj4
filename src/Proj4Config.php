@@ -163,6 +163,11 @@ class Proj4Config
      * @var string Title of this definition.
      */
     protected $title;
+
+    /**
+     * @var float
+     */
+    protected $from_greenwich = 0.0;
     
     public function __construct($configurationString)
     {
@@ -176,7 +181,7 @@ class Proj4Config
             } elseif (property_exists($this, $attribute)) {
                 $this->$attribute = $value;
             } else {
-                throw new \Exception("Unknown parameter: $key");
+                throw new \Exception("Unknown parameter: '$key' for definition: $configurationString");
             }
         }
 

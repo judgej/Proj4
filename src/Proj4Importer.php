@@ -31,7 +31,11 @@ class Proj4Importer
         return false !== file_put_contents($this->targetDirectory . '/' . $fileName . '.json', json_encode($data, JSON_PRETTY_PRINT));
     }
 
-
+    /**
+     * Import projections.
+     * @todo Use expanded list to set applicable parameters per projection. (It seems the output from proj -lP is not consistent)
+     *
+     */
     public function importProjections()
     {
         $data = [];
