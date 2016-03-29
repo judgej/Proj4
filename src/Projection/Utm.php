@@ -168,7 +168,7 @@ class Utm extends Tmerc
             $temp = $this->lat0 + $point->y / ($this->a * $this->k0);
             $h = cos($temp);
             $con = sqrt((1.0 - $h * $h) / (1.0 + $g * $g));
-            $lat = this->asinz($con);
+            $lat = $this->asinz($con);
             if ($temp < 0)
                 $lat = -$lat;
             if (($g == 0) && ($h == 0)) {
@@ -193,7 +193,7 @@ class Utm extends Tmerc
                 }
 
                 if ($i >= $max_iter) {
-                    raise new Exception('tmerc:inverse: Latitude failed to converge');
+                    throw new Exception('tmerc:inverse: Latitude failed to converge');
                 }
             }
 

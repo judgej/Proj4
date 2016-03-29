@@ -1,0 +1,138 @@
+{
+    "WGS84": {
+        "ellipse": "WGS84",
+        "def": {
+            "towgs84": [
+                0,
+                0,
+                0
+            ]
+        },
+        "comment": "",
+        "source": "       WGS84 WGS84        towgs84=0,0,0                 "
+    },
+    "GGRS87": {
+        "ellipse": "GRS80",
+        "def": {
+            "towgs84": [
+                -199.87,
+                74.79,
+                246.62
+            ]
+        },
+        "comment": "Greek_Geodetic_Reference_System_1987",
+        "source": "      GGRS87 GRS80        towgs84=-199.87,74.79,246.62                            Greek_Geodetic_Reference_System_1987"
+    },
+    "NAD83": {
+        "ellipse": "GRS80",
+        "def": {
+            "towgs84": [
+                0,
+                0,
+                0
+            ]
+        },
+        "comment": "North_American_Datum_1983",
+        "source": "       NAD83 GRS80        towgs84=0,0,0                                           North_American_Datum_1983"
+    },
+    "NAD27": {
+        "ellipse": "clrk66",
+        "def": {
+            "nadgrids": "@conus,@alaska,@ntv2_0.gsb,@ntv1_can.dat"
+        },
+        "comment": "North_American_Datum_1927",
+        "source": "       NAD27 clrk66       nadgrids=@conus,@alaska,@ntv2_0.gsb,@ntv1_can.dat                          North_American_Datum_1927"
+    },
+    "potsdam": {
+        "ellipse": "bessel",
+        "def": {
+            "towgs84": [
+                598.1,
+                73.7,
+                418.2,
+                0.202,
+                0.045,
+                -2.455,
+                6.7
+            ]
+        },
+        "comment": "Potsdam Rauenberg 1950 DHDN",
+        "source": "     potsdam bessel       towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7                          Potsdam Rauenberg 1950 DHDN"
+    },
+    "carthage": {
+        "ellipse": "clrk80ign",
+        "def": {
+            "towgs84": [
+                -263,
+                6,
+                431
+            ]
+        },
+        "comment": "Carthage 1934 Tunisia",
+        "source": "    carthage clrk80ign    towgs84=-263.0,6.0,431.0                                Carthage 1934 Tunisia"
+    },
+    "hermannskogel": {
+        "ellipse": "bessel",
+        "def": {
+            "towgs84": [
+                577.326,
+                90.129,
+                463.919,
+                5.137,
+                1.474,
+                5.297,
+                2.4232
+            ]
+        },
+        "comment": "Hermannskogel",
+        "source": "hermannskogel bessel       towgs84=577.326,90.129,463.919,5.137,1.474,5.297,2.4232                          Hermannskogel"
+    },
+    "ire65": {
+        "ellipse": "mod_airy",
+        "def": {
+            "towgs84": [
+                482.53,
+                -130.596,
+                564.557,
+                -1.042,
+                -0.214,
+                -0.631,
+                8.15
+            ]
+        },
+        "comment": "Ireland 1965",
+        "source": "       ire65 mod_airy     towgs84=482.530,-130.596,564.557,-1.042,-0.214,-0.631,8.15                          Ireland 1965"
+    },
+    "nzgd49": {
+        "ellipse": "intl",
+        "def": {
+            "towgs84": [
+                59.47,
+                -5.04,
+                187.44,
+                0.47,
+                -0.1,
+                1.024,
+                -4.5993
+            ]
+        },
+        "comment": "New Zealand Geodetic Datum 1949",
+        "source": "      nzgd49 intl         towgs84=59.47,-5.04,187.44,0.47,-0.1,1.024,-4.5993                          New Zealand Geodetic Datum 1949"
+    },
+    "OSGB36": {
+        "ellipse": "airy",
+        "def": {
+            "towgs84": [
+                446.448,
+                -125.157,
+                542.06,
+                0.1502,
+                0.247,
+                0.8421,
+                -20.4894
+            ]
+        },
+        "comment": "Airy 1830",
+        "source": "      OSGB36 airy         towgs84=446.448,-125.157,542.060,0.1502,0.2470,0.8421,-20.4894                          Airy 1830"
+    }
+}

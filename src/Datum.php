@@ -86,7 +86,7 @@ class Datum
     /**
      * A datum needs parameters to be defined.
      * These will be three parameters offering a spacial shift, or seven
-     * parameters offering a spacial shift + reotations + scale.
+     * parameters offering a spacial shift + rotations + scale.
      * Parameters can be left empty, in which case the datum defaults to
      * WGS84 (which is the reference datum, so no transformations are needed).
      * of points. Except - is the ellipse carried by the datum or the point? I think

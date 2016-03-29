@@ -1,0 +1,538 @@
+{
+    "aea": {
+        "name": "Albers Equal Area",
+        "source": "aea : Albers Equal Area"
+    },
+    "aeqd": {
+        "name": "Azimuthal Equidistant",
+        "source": "aeqd : Azimuthal Equidistant"
+    },
+    "airy": {
+        "name": "Airy",
+        "source": "airy : Airy"
+    },
+    "aitoff": {
+        "name": "Aitoff",
+        "source": "aitoff : Aitoff"
+    },
+    "alsk": {
+        "name": "Mod. Stererographics of Alaska",
+        "source": "alsk : Mod. Stererographics of Alaska"
+    },
+    "apian": {
+        "name": "Apian Globular I",
+        "source": "apian : Apian Globular I"
+    },
+    "august": {
+        "name": "August Epicycloidal",
+        "source": "august : August Epicycloidal"
+    },
+    "bacon": {
+        "name": "Bacon Globular",
+        "source": "bacon : Bacon Globular"
+    },
+    "bipc": {
+        "name": "Bipolar conic of western hemisphere",
+        "source": "bipc : Bipolar conic of western hemisphere"
+    },
+    "boggs": {
+        "name": "Boggs Eumorphic",
+        "source": "boggs : Boggs Eumorphic"
+    },
+    "bonne": {
+        "name": "Bonne (Werner lat_1=90)",
+        "source": "bonne : Bonne (Werner lat_1=90)"
+    },
+    "calcofi": {
+        "name": "Cal Coop Ocean Fish Invest Lines\/Stations",
+        "source": "calcofi : Cal Coop Ocean Fish Invest Lines\/Stations"
+    },
+    "cass": {
+        "name": "Cassini",
+        "source": "cass : Cassini"
+    },
+    "cc": {
+        "name": "Central Cylindrical",
+        "source": "cc : Central Cylindrical"
+    },
+    "cea": {
+        "name": "Equal Area Cylindrical",
+        "source": "cea : Equal Area Cylindrical"
+    },
+    "chamb": {
+        "name": "Chamberlin Trimetric",
+        "source": "chamb : Chamberlin Trimetric"
+    },
+    "collg": {
+        "name": "Collignon",
+        "source": "collg : Collignon"
+    },
+    "crast": {
+        "name": "Craster Parabolic (Putnins P4)",
+        "source": "crast : Craster Parabolic (Putnins P4)"
+    },
+    "denoy": {
+        "name": "Denoyer Semi-Elliptical",
+        "source": "denoy : Denoyer Semi-Elliptical"
+    },
+    "eck1": {
+        "name": "Eckert I",
+        "source": "eck1 : Eckert I"
+    },
+    "eck2": {
+        "name": "Eckert II",
+        "source": "eck2 : Eckert II"
+    },
+    "eck3": {
+        "name": "Eckert III",
+        "source": "eck3 : Eckert III"
+    },
+    "eck4": {
+        "name": "Eckert IV",
+        "source": "eck4 : Eckert IV"
+    },
+    "eck5": {
+        "name": "Eckert V",
+        "source": "eck5 : Eckert V"
+    },
+    "eck6": {
+        "name": "Eckert VI",
+        "source": "eck6 : Eckert VI"
+    },
+    "eqc": {
+        "name": "Equidistant Cylindrical (Plate Caree)",
+        "source": "eqc : Equidistant Cylindrical (Plate Caree)"
+    },
+    "eqdc": {
+        "name": "Equidistant Conic",
+        "source": "eqdc : Equidistant Conic"
+    },
+    "euler": {
+        "name": "Euler",
+        "source": "euler : Euler"
+    },
+    "etmerc": {
+        "name": "Extended Transverse Mercator",
+        "source": "etmerc : Extended Transverse Mercator"
+    },
+    "fahey": {
+        "name": "Fahey",
+        "source": "fahey : Fahey"
+    },
+    "fouc": {
+        "name": "Foucaut",
+        "source": "fouc : Foucaut"
+    },
+    "fouc_s": {
+        "name": "Foucaut Sinusoidal",
+        "source": "fouc_s : Foucaut Sinusoidal"
+    },
+    "gall": {
+        "name": "Gall (Gall Stereographic)",
+        "source": "gall : Gall (Gall Stereographic)"
+    },
+    "geos": {
+        "name": "Geostationary Satellite View",
+        "source": "geos : Geostationary Satellite View"
+    },
+    "gins8": {
+        "name": "Ginsburg VIII (TsNIIGAiK)",
+        "source": "gins8 : Ginsburg VIII (TsNIIGAiK)"
+    },
+    "gn_sinu": {
+        "name": "General Sinusoidal Series",
+        "source": "gn_sinu : General Sinusoidal Series"
+    },
+    "gnom": {
+        "name": "Gnomonic",
+        "source": "gnom : Gnomonic"
+    },
+    "goode": {
+        "name": "Goode Homolosine",
+        "source": "goode : Goode Homolosine"
+    },
+    "gs48": {
+        "name": "Mod. Stererographics of 48 U.S.",
+        "source": "gs48 : Mod. Stererographics of 48 U.S."
+    },
+    "gs50": {
+        "name": "Mod. Stererographics of 50 U.S.",
+        "source": "gs50 : Mod. Stererographics of 50 U.S."
+    },
+    "hammer": {
+        "name": "Hammer & Eckert-Greifendorff",
+        "source": "hammer : Hammer & Eckert-Greifendorff"
+    },
+    "hatano": {
+        "name": "Hatano Asymmetrical Equal Area",
+        "source": "hatano : Hatano Asymmetrical Equal Area"
+    },
+    "healpix": {
+        "name": "HEALPix",
+        "source": "healpix : HEALPix"
+    },
+    "rhealpix": {
+        "name": "rHEALPix",
+        "source": "rhealpix : rHEALPix"
+    },
+    "igh": {
+        "name": "Interrupted Goode Homolosine",
+        "source": "igh : Interrupted Goode Homolosine"
+    },
+    "imw_p": {
+        "name": "International Map of the World Polyconic",
+        "source": "imw_p : International Map of the World Polyconic"
+    },
+    "isea": {
+        "name": "Icosahedral Snyder Equal Area",
+        "source": "isea : Icosahedral Snyder Equal Area"
+    },
+    "kav5": {
+        "name": "Kavraisky V",
+        "source": "kav5 : Kavraisky V"
+    },
+    "kav7": {
+        "name": "Kavraisky VII",
+        "source": "kav7 : Kavraisky VII"
+    },
+    "krovak": {
+        "name": "Krovak",
+        "source": "krovak : Krovak"
+    },
+    "labrd": {
+        "name": "Laborde",
+        "source": "labrd : Laborde"
+    },
+    "laea": {
+        "name": "Lambert Azimuthal Equal Area",
+        "source": "laea : Lambert Azimuthal Equal Area"
+    },
+    "lagrng": {
+        "name": "Lagrange",
+        "source": "lagrng : Lagrange"
+    },
+    "larr": {
+        "name": "Larrivee",
+        "source": "larr : Larrivee"
+    },
+    "lask": {
+        "name": "Laskowski",
+        "source": "lask : Laskowski"
+    },
+    "lonlat": {
+        "name": "Lat\/long (Geodetic)",
+        "source": "lonlat : Lat\/long (Geodetic)"
+    },
+    "latlon": {
+        "name": "Lat\/long (Geodetic alias)",
+        "source": "latlon : Lat\/long (Geodetic alias)"
+    },
+    "lcc": {
+        "name": "Lambert Conformal Conic",
+        "source": "lcc : Lambert Conformal Conic"
+    },
+    "lcca": {
+        "name": "Lambert Conformal Conic Alternative",
+        "source": "lcca : Lambert Conformal Conic Alternative"
+    },
+    "leac": {
+        "name": "Lambert Equal Area Conic",
+        "source": "leac : Lambert Equal Area Conic"
+    },
+    "lee_os": {
+        "name": "Lee Oblated Stereographic",
+        "source": "lee_os : Lee Oblated Stereographic"
+    },
+    "loxim": {
+        "name": "Loximuthal",
+        "source": "loxim : Loximuthal"
+    },
+    "lsat": {
+        "name": "Space oblique for LANDSAT",
+        "source": "lsat : Space oblique for LANDSAT"
+    },
+    "mbt_s": {
+        "name": "McBryde-Thomas Flat-Polar Sine (No. 1)",
+        "source": "mbt_s : McBryde-Thomas Flat-Polar Sine (No. 1)"
+    },
+    "mbt_fps": {
+        "name": "McBryde-Thomas Flat-Pole Sine (No. 2)",
+        "source": "mbt_fps : McBryde-Thomas Flat-Pole Sine (No. 2)"
+    },
+    "mbtfpp": {
+        "name": "McBride-Thomas Flat-Polar Parabolic",
+        "source": "mbtfpp : McBride-Thomas Flat-Polar Parabolic"
+    },
+    "mbtfpq": {
+        "name": "McBryde-Thomas Flat-Polar Quartic",
+        "source": "mbtfpq : McBryde-Thomas Flat-Polar Quartic"
+    },
+    "mbtfps": {
+        "name": "McBryde-Thomas Flat-Polar Sinusoidal",
+        "source": "mbtfps : McBryde-Thomas Flat-Polar Sinusoidal"
+    },
+    "merc": {
+        "name": "Mercator",
+        "source": "merc : Mercator"
+    },
+    "mil_os": {
+        "name": "Miller Oblated Stereographic",
+        "source": "mil_os : Miller Oblated Stereographic"
+    },
+    "mill": {
+        "name": "Miller Cylindrical",
+        "source": "mill : Miller Cylindrical"
+    },
+    "moll": {
+        "name": "Mollweide",
+        "source": "moll : Mollweide"
+    },
+    "murd1": {
+        "name": "Murdoch I",
+        "source": "murd1 : Murdoch I"
+    },
+    "murd2": {
+        "name": "Murdoch II",
+        "source": "murd2 : Murdoch II"
+    },
+    "murd3": {
+        "name": "Murdoch III",
+        "source": "murd3 : Murdoch III"
+    },
+    "natearth": {
+        "name": "Natural Earth",
+        "source": "natearth : Natural Earth"
+    },
+    "nell": {
+        "name": "Nell",
+        "source": "nell : Nell"
+    },
+    "nell_h": {
+        "name": "Nell-Hammer",
+        "source": "nell_h : Nell-Hammer"
+    },
+    "nicol": {
+        "name": "Nicolosi Globular",
+        "source": "nicol : Nicolosi Globular"
+    },
+    "nsper": {
+        "name": "Near-sided perspective",
+        "source": "nsper : Near-sided perspective"
+    },
+    "nzmg": {
+        "name": "New Zealand Map Grid",
+        "source": "nzmg : New Zealand Map Grid"
+    },
+    "ob_tran": {
+        "name": "General Oblique Transformation",
+        "source": "ob_tran : General Oblique Transformation"
+    },
+    "ocea": {
+        "name": "Oblique Cylindrical Equal Area",
+        "source": "ocea : Oblique Cylindrical Equal Area"
+    },
+    "oea": {
+        "name": "Oblated Equal Area",
+        "source": "oea : Oblated Equal Area"
+    },
+    "omerc": {
+        "name": "Oblique Mercator",
+        "source": "omerc : Oblique Mercator"
+    },
+    "ortel": {
+        "name": "Ortelius Oval",
+        "source": "ortel : Ortelius Oval"
+    },
+    "ortho": {
+        "name": "Orthographic",
+        "source": "ortho : Orthographic"
+    },
+    "pconic": {
+        "name": "Perspective Conic",
+        "source": "pconic : Perspective Conic"
+    },
+    "poly": {
+        "name": "Polyconic (American)",
+        "source": "poly : Polyconic (American)"
+    },
+    "putp1": {
+        "name": "Putnins P1",
+        "source": "putp1 : Putnins P1"
+    },
+    "putp2": {
+        "name": "Putnins P2",
+        "source": "putp2 : Putnins P2"
+    },
+    "putp3": {
+        "name": "Putnins P3",
+        "source": "putp3 : Putnins P3"
+    },
+    "putp3p": {
+        "name": "Putnins P3'",
+        "source": "putp3p : Putnins P3'"
+    },
+    "putp4p": {
+        "name": "Putnins P4'",
+        "source": "putp4p : Putnins P4'"
+    },
+    "putp5": {
+        "name": "Putnins P5",
+        "source": "putp5 : Putnins P5"
+    },
+    "putp5p": {
+        "name": "Putnins P5'",
+        "source": "putp5p : Putnins P5'"
+    },
+    "putp6": {
+        "name": "Putnins P6",
+        "source": "putp6 : Putnins P6"
+    },
+    "putp6p": {
+        "name": "Putnins P6'",
+        "source": "putp6p : Putnins P6'"
+    },
+    "qua_aut": {
+        "name": "Quartic Authalic",
+        "source": "qua_aut : Quartic Authalic"
+    },
+    "qsc": {
+        "name": "Quadrilateralized Spherical Cube",
+        "source": "qsc : Quadrilateralized Spherical Cube"
+    },
+    "robin": {
+        "name": "Robinson",
+        "source": "robin : Robinson"
+    },
+    "rouss": {
+        "name": "Roussilhe Stereographic",
+        "source": "rouss : Roussilhe Stereographic"
+    },
+    "rpoly": {
+        "name": "Rectangular Polyconic",
+        "source": "rpoly : Rectangular Polyconic"
+    },
+    "sinu": {
+        "name": "Sinusoidal (Sanson-Flamsteed)",
+        "source": "sinu : Sinusoidal (Sanson-Flamsteed)"
+    },
+    "somerc": {
+        "name": "Swiss. Obl. Mercator",
+        "source": "somerc : Swiss. Obl. Mercator"
+    },
+    "stere": {
+        "name": "Stereographic",
+        "source": "stere : Stereographic"
+    },
+    "sterea": {
+        "name": "Oblique Stereographic Alternative",
+        "source": "sterea : Oblique Stereographic Alternative"
+    },
+    "gstmerc": {
+        "name": "Gauss-Schreiber Transverse Mercator (aka Gauss-Laborde Reunion)",
+        "source": "gstmerc : Gauss-Schreiber Transverse Mercator (aka Gauss-Laborde Reunion)"
+    },
+    "tcc": {
+        "name": "Transverse Central Cylindrical",
+        "source": "tcc : Transverse Central Cylindrical"
+    },
+    "tcea": {
+        "name": "Transverse Cylindrical Equal Area",
+        "source": "tcea : Transverse Cylindrical Equal Area"
+    },
+    "tissot": {
+        "name": "Tissot",
+        "source": "tissot : Tissot"
+    },
+    "tmerc": {
+        "name": "Transverse Mercator",
+        "source": "tmerc : Transverse Mercator"
+    },
+    "tpeqd": {
+        "name": "Two Point Equidistant",
+        "source": "tpeqd : Two Point Equidistant"
+    },
+    "tpers": {
+        "name": "Tilted perspective",
+        "source": "tpers : Tilted perspective"
+    },
+    "ups": {
+        "name": "Universal Polar Stereographic",
+        "source": "ups : Universal Polar Stereographic"
+    },
+    "urm5": {
+        "name": "Urmaev V",
+        "source": "urm5 : Urmaev V"
+    },
+    "urmfps": {
+        "name": "Urmaev Flat-Polar Sinusoidal",
+        "source": "urmfps : Urmaev Flat-Polar Sinusoidal"
+    },
+    "utm": {
+        "name": "Universal Transverse Mercator (UTM)",
+        "source": "utm : Universal Transverse Mercator (UTM)"
+    },
+    "vandg": {
+        "name": "van der Grinten (I)",
+        "source": "vandg : van der Grinten (I)"
+    },
+    "vandg2": {
+        "name": "van der Grinten II",
+        "source": "vandg2 : van der Grinten II"
+    },
+    "vandg3": {
+        "name": "van der Grinten III",
+        "source": "vandg3 : van der Grinten III"
+    },
+    "vandg4": {
+        "name": "van der Grinten IV",
+        "source": "vandg4 : van der Grinten IV"
+    },
+    "vitk1": {
+        "name": "Vitkovsky I",
+        "source": "vitk1 : Vitkovsky I"
+    },
+    "wag1": {
+        "name": "Wagner I (Kavraisky VI)",
+        "source": "wag1 : Wagner I (Kavraisky VI)"
+    },
+    "wag2": {
+        "name": "Wagner II",
+        "source": "wag2 : Wagner II"
+    },
+    "wag3": {
+        "name": "Wagner III",
+        "source": "wag3 : Wagner III"
+    },
+    "wag4": {
+        "name": "Wagner IV",
+        "source": "wag4 : Wagner IV"
+    },
+    "wag5": {
+        "name": "Wagner V",
+        "source": "wag5 : Wagner V"
+    },
+    "wag6": {
+        "name": "Wagner VI",
+        "source": "wag6 : Wagner VI"
+    },
+    "wag7": {
+        "name": "Wagner VII",
+        "source": "wag7 : Wagner VII"
+    },
+    "weren": {
+        "name": "Werenskiold I",
+        "source": "weren : Werenskiold I"
+    },
+    "wink1": {
+        "name": "Winkel I",
+        "source": "wink1 : Winkel I"
+    },
+    "wink2": {
+        "name": "Winkel II",
+        "source": "wink2 : Winkel II"
+    },
+    "wintri": {
+        "name": "Winkel Tripel",
+        "source": "wintri : Winkel Tripel"
+    }
+}
