@@ -42,7 +42,7 @@ class Proj4Config
     /**
      * @var string Ellipsoid name (see `proj -le`)
      */
-    protected $ellps;
+    protected $ellps = 'WGS84';
 
     /**
      * @var float Scaling factor (old name)
@@ -136,27 +136,26 @@ class Proj4Config
     /**
      * @var vertical conversion to meters.
      */
-
     protected $vto_meter;
+
     /**
      * @var vertical units.
      */
-
     protected $vunits;
+
     /**
      * @var int False easting
      */
-
     protected $x_0;
+
     /**
      * @var int False northing
      */
-
     protected $y_0;
+
     /**
      * @var  UTM zone
      */
-
     protected $zone;
 
     /**
@@ -212,6 +211,7 @@ class Proj4Config
      */
     public static function convert($value, $key = null)
     {
+        $value = trim($value);
         if (strpos($value, '/') !== false
             && count($parts = explode('/', $value)) === 2
             && is_numeric($parts[0])
@@ -237,5 +237,32 @@ class Proj4Config
         return $value;
     }
 
+    /**
+     * @return Ellipsoid
+     */
+    public function getEllipsoid()
+    {
+        // This is just to show it is working, obviously it needs refactoring to load this in a more centralized matter.
+        $definitions = json_decode(file_get_contents(__DIR__ . '/data/ellipsoids.json'), true);
+        if (isset($definitions[$this->ellps])) {
+            return new Ellipsoid($definitions[$this->ellps]);
+        } else {
+            throw new \Exception("Can't find definition for ellipsoid: $this->ellps");
+        }
+
+    }
+
+    /**
+     * @return Datum
+     */
+    public function getDatum()
+    {
+        if (!isset($this->towgs84)) {
+            // These 3 are translation parameters, 0 is an identity for translation.
+            return new Datum([0, 0, 0], $this->getEllipsoid());
+        } else {
+            return new Datum($this->towgs84, $this->getEllipsoid());
+        }
+    }
 
 }
